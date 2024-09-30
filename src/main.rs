@@ -14,7 +14,8 @@ fn main() {
             request.headers()
         );*/
         let path_served = Path::new(request.url().split_once('/').unwrap().1);
-        let x = Path::new("../web/").join(path_served);
+        let folder_default = Path::new("../web/");
+        let x = folder_default.join(path_served);
 
         //make that i just give the name and it adds .html or something
         let serve_file;
@@ -24,10 +25,10 @@ fn main() {
                     serve_file = Response::from_file(File::open(x).unwrap());
                 }
                 None => {
-                    match File::open(Path::new("../web/").join(path_served).join("index.html")) {
+                    match File::open(folder_default.join(path_served).join("index.html")) {
                         Ok(x) => serve_file = Response::from_file(x),
                         Err(_) => {
-                            println!("i dont know what brings you here");
+                            //this is what happens if you try to open a folder that exists, but has no index.html
                             serve_file = Response::from_file(
                                 File::open(Path::new("../web/404.html")).unwrap(),
                             )
