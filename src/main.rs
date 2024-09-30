@@ -7,16 +7,10 @@ fn main() {
     let server = Server::http(ip).unwrap();
 
     for request in server.incoming_requests() {
-        /*println!(
-            "Request\n url: {:?}\n, headers: {:?}",
-            //request.method(),
-            request.url(),
-            request.headers()
-        );*/
         let path_served = Path::new(request.url().split_once('/').unwrap().1);
         let folder_default = Path::new("../web/");
         let x = folder_default.join(path_served);
-
+        //make so that it adds the .htm so i dont have to
         //make that i just give the name and it adds .html or something
         let file_404_page = Response::from_string("404 :(");
         if x.exists() {
