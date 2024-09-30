@@ -7,35 +7,34 @@ fn main() {
     let server = Server::http(ip).unwrap();
 
     for request in server.incoming_requests() {
-       
-        /*println!(
-            "received request! method: {:?}\n, url: {:?}\n, headers: {:?}",
-            request.method(),
+        println!(
+            "Request\n url: {:?}\n, headers: {:?}",
+            //request.method(),
             request.url(),
             request.headers()
-        );*/
-        
+        );
+
         let path_served = Path::new(request.url().split_once('/').unwrap().1);
         let x = Path::new("../web/").join(path_served);
 
         //make that i just give the name and it adds .html or something
-        let serve_file: File;
+        let serve_file: Response<File>;
         if x.exists() {
             match path_served.extension() {
                 Some(_) => {
-                    
-                    let _ = request.respond(Response::from_file(File::open(x).unwrap()));
+                    serve_file = Response::from_file(File::open(x).unwrap());
                 }
                 None => {
                     let pathx =
                         File::open(Path::new("../web/").join(path_served).join("index.html"))
                             .unwrap();
-                    let _ = request.respond(Response::from_file(pathx));
+                    serve_file = Response::from_file(pathx);
                 }
             };
         } else {
             let index_file = File::open(Path::new("../web/index.html")).unwrap();
-            let _ = request.respond(Response::from_file(index_file));
+            serve_file = Response::from_file(index_file);
         }
+        let _ = request.respond(serve_file);
     }
 }
