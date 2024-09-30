@@ -18,27 +18,26 @@ fn main() {
         let x = folder_default.join(path_served);
 
         //make that i just give the name and it adds .html or something
-        let serve_file;
+        let file_404_page = Response::from_string("404 :(");
         if x.exists() {
             match path_served.extension() {
                 Some(_) => {
-                    serve_file = Response::from_file(File::open(x).unwrap());
+                    let _ = request.respond(Response::from_file(File::open(x).unwrap()));
                 }
                 None => {
                     match File::open(folder_default.join(path_served).join("index.html")) {
-                        Ok(x) => serve_file = Response::from_file(x),
+                        Ok(x) => {
+                            let _ = request.respond(Response::from_file(x));
+                        }
                         Err(_) => {
                             //this is what happens if you try to open a folder that exists, but has no index.html
-                            serve_file = Response::from_file(
-                                File::open(Path::new("../web/404.html")).unwrap(),
-                            )
+                            let _ = request.respond(file_404_page);
                         }
                     }
                 }
             };
         } else {
-            serve_file = Response::from_file(File::open(Path::new("../web/404.html")).unwrap());
+            let _ = request.respond(file_404_page);
         }
-        let _ = request.respond(serve_file);
     }
 }
