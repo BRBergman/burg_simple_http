@@ -8,30 +8,10 @@ impl ToResultPath for Path {
     ///let path_full = Path::new("/some/path");
     ///match path_full.to_result_path() {
     ///ResultPath::File(file) => {
-    ///     //do something with file
+    ///    println!("{:?}",file);
     ///}
     ///ResultPath::Directory(path) => {
-    ///    //do something with the path 
-    ///}
-    ///ResultPath::Err(err) => {
-    ///panic!() 
-    /// }};
-    ///```
-    fn to_result_path(&self) -> ResultPath {
-        ResultPath::from_path(self.to_path_buf())
-    }
-}
-
-impl ToResultPath for PathBuf {
-    ///checks if the Path is a File, a Directory, or Neither / Does Not Exist
-    /// ```
-    ///let path_full = Path::new("/some/path");
-    ///match path_full.to_result_path() {
-    ///ResultPath::File(file) => {
-    ///     //do something with file
-    ///}
-    ///ResultPath::Directory(path) => {
-    ///    //do something with the path 
+    ///    println!("{:?}",path); 
     ///}
     ///ResultPath::Err(err) => {
     ///panic!() 
