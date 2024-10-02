@@ -16,14 +16,14 @@ fn main() {
             Path::new("../")
         }
         .join(Path::new("web"))
-        .join(Path::new(request.url().split_once('/').unwrap().1));
+        .join(Path::new(request.url().trim_start_matches('/')));
         println!("{:?}", path_full);
         match path_full.to_result_path() {
             ResultPath::File(file) => {
                 let _ = request.respond(Response::from_file(file));
             }
-            ResultPath::Directory(path_buf) => {
-                match File::open(path_buf.join("index.html")) {
+            ResultPath::Directory(path) => {
+                match File::open(path.join("index.html")) {
                     Ok(file) => {
                         let _ = request.respond(Response::from_file(file));
                     }
