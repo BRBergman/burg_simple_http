@@ -33,7 +33,7 @@ fn main() {
                     }
                 }
             }
-            ResultPath::Err(_x) => {
+            ResultPath::Err(_) => {
                 let _ = request.respond(file_404_page);
             }
         };

@@ -11,10 +11,10 @@ impl ToResultPath for Path {
     ///    println!("{:?}",file);
     ///}
     ///ResultPath::Directory(path) => {
-    ///    println!("{:?}",path); 
+    ///    println!("{:?}",path);
     ///}
     ///ResultPath::Err(err) => {
-    ///panic!() 
+    ///     panic!("not file or directory");
     /// }};
     ///```
     fn to_result_path(&self) -> ResultPath {
@@ -23,7 +23,9 @@ impl ToResultPath for Path {
 }
 pub(crate) trait ToResultPath {
     fn to_result_path(&self) -> ResultPath;
+
 }
+#[allow(dead_code)]
 pub enum ResultPath {
     /// File of type:
     /// ```
@@ -42,7 +44,12 @@ pub enum ResultPath {
 impl ResultPath {
     fn from_path(path_buf: PathBuf) -> ResultPath {
         if path_buf.is_file() {
-            return ResultPath::File(File::open(path_buf).unwrap());
+            match File::open(path_buf.clone()) {
+                Ok(file) => {
+                    return ResultPath::File(file);
+                }
+                Err(_) => (),
+            };
         } else if path_buf.is_dir() {
             return ResultPath::Directory(path_buf);
         }
