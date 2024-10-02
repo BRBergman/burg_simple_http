@@ -10,13 +10,10 @@ fn main() {
     println!("running");
     for request in server.incoming_requests() {
         let file_404_page = Response::from_string("404 :(");
-        let path_full = if cfg!(windows) {
-            Path::new("./")
-        } else {
-            Path::new("../")
-        }
-        .join(Path::new("web"))
-        .join(Path::new(request.url().trim_start_matches('/')));
+        let path_full = std::env::current_dir()
+            .unwrap()
+            .join(Path::new("web"))
+            .join(Path::new(request.url().trim_start_matches('/')));
         println!("{:?}", path_full);
         match path_full.to_result_path() {
             ResultPath::File(file) => {

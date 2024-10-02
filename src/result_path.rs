@@ -23,7 +23,6 @@ impl ToResultPath for Path {
 }
 pub(crate) trait ToResultPath {
     fn to_result_path(&self) -> ResultPath;
-
 }
 #[allow(dead_code)]
 pub enum ResultPath {
