@@ -3,20 +3,22 @@ use std::io::Error;
 use std::path::{Path, PathBuf};
 
 impl ToResultPath for Path {
-    ///checks if the Path is a File, a Directory, or Neither/ Does Not Exist
+    /// checks if the Path is a File, 
+    /// a Directory, 
+    /// or Neither
     /// ```
-    ///let path_full = Path::new("/some/path");
-    ///match path_full.to_result_path() {
-    ///ResultPath::File(file) => {
+    /// let path_full = Path::new("/some/path");
+    /// match path_full.to_result_path() {
+    /// ResultPath::File(file) => {
     ///    println!("{:?}",file);
-    ///}
-    ///ResultPath::Directory(path) => {
+    /// }
+    /// ResultPath::Directory(path) => {
     ///    println!("{:?}",path);
-    ///}
-    ///ResultPath::Err(err) => {
+    /// }
+    /// ResultPath::Err(err) => {
     ///     panic!("not file or directory");
     /// }};
-    ///```
+    /// ```
     fn to_result_path(&self) -> ResultPath {
         ResultPath::from_path(self.to_path_buf())
     }
