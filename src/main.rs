@@ -10,11 +10,17 @@ fn main() {
     println!("running");
     for request in server.incoming_requests() {
         let file_404_page = Response::from_string("404 :(");
-        let path_full =
-            Path::new("../web/").join(Path::new(request.url().split_once('/').unwrap().1));
+        let path_full = if cfg!(windows) {
+            Path::new("./")
+        } else {
+            Path::new("../")
+        }
+        .join(Path::new("web"))
+        .join(Path::new(request.url().split_once('/').unwrap().1));
+        println!("{:?}", path_full);
         match path_full.to_result_path() {
-            ResultPath::File(path_buf) => {
-                let _ = request.respond(Response::from_file(File::open(path_buf).unwrap()));
+            ResultPath::File(file) => {
+                let _ = request.respond(Response::from_file(file));
             }
             ResultPath::Directory(path_buf) => {
                 match File::open(path_buf.join("index.html")) {

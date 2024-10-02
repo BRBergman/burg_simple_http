@@ -1,3 +1,4 @@
+use std::fs::File;
 use std::io::Error;
 use std::path::{Path, PathBuf};
 
@@ -15,7 +16,7 @@ pub(crate) trait ToResultPath {
     fn to_result_path(&self) -> ResultPath;
 }
 pub enum ResultPath {
-    File(PathBuf),
+    File(File),
     Directory(PathBuf),
     Err(Error),
 }
@@ -23,7 +24,7 @@ pub enum ResultPath {
 impl ResultPath {
     fn from_path(path: PathBuf) -> ResultPath {
         if path.is_file() {
-            return ResultPath::File(path);
+            return ResultPath::File(File::open(path).unwrap());
         } else if path.is_dir() {
             return ResultPath::Directory(path);
         }
