@@ -7,17 +7,21 @@ impl ToResultPath for Path {
     /// a Directory, 
     /// or Neither
     /// ```
-    /// let path_full = Path::new("/some/path");
+    /// use std::fs::File;
+    /// use std::path::{Path, PathBuf};
+    /// 
+    /// let path_full = Path::new("/some/path/");
     /// match path_full.to_result_path() {
-    /// ResultPath::File(file) => {
-    ///    println!("{:?}",file);
-    /// }
-    /// ResultPath::Directory(path) => {
-    ///    println!("{:?}",path);
-    /// }
-    /// ResultPath::Err(err) => {
-    ///     panic!("not file or directory");
-    /// }};
+    ///     ResultPath::File(file) => {
+    ///         println!("{:?}",file);
+    ///     }
+    ///     ResultPath::Directory(path) => {
+    ///         println!("{:?}",path);
+    ///     }
+    ///     ResultPath::Err(err) => {
+    ///         panic!("not file or directory");
+    ///     }
+    /// };
     /// ```
     fn to_result_path(&self) -> ResultPath {
         ResultPath::from_path(self.to_path_buf())
