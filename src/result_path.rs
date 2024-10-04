@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::Error;
+use std::io::{self, Error};
 use std::path::{Path, PathBuf};
 
 impl ToResultPath for Path {
@@ -49,7 +49,7 @@ pub enum ResultPath {
 impl ResultPath {
     fn from_path(path_buf: PathBuf) -> ResultPath {
         if path_buf.is_file() {
-            match File::open(path_buf.clone()) {
+            match path_buf.to_file() {
                 Ok(file) => {
                     return ResultPath::File(file);
                 }
@@ -62,5 +62,14 @@ impl ResultPath {
             std::io::ErrorKind::NotFound,
             path_buf.to_str().unwrap(),
         ));
+    }
+}
+
+pub (crate) trait ToFile{
+    fn to_file(&self) -> io::Result<File>;
+}
+impl ToFile for Path{
+    fn to_file(&self) -> io::Result<File> {
+        File::open(self)
     }
 }
