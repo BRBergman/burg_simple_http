@@ -3,7 +3,7 @@ use std::{fs::File, path::Path};
 use tiny_http::{Response, Server};
 
 mod result_path;
-use result_path::{ResultPath, ToResultPath};
+use result_path::{ResultPath, ToFile, ToResultPath};
 
 fn main() {
     let server = Server::http(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, 8000)).unwrap();
@@ -17,12 +17,12 @@ fn main() {
         println!("{:?}", path_full);
         match path_full.to_result_path() {
             ResultPath::File(file) => {
-                let _ = request.respond(Response::from_file(file));
+                let _ = request.respond(file.to_responce());
             }
             ResultPath::Directory(path) => {
-                match File::open(path.join("index.html")) {
+                match path.join("index.html").to_file() {
                     Ok(file) => {
-                        let _ = request.respond(Response::from_file(file));
+                        let _ = request.respond(file.to_responce());
                     }
                     Err(_) => {
                         //this is what happens if you try to open a folder that exists, but has no index.html
@@ -34,5 +34,14 @@ fn main() {
                 let _ = request.respond(file_404_page);
             }
         };
+    }
+}
+
+trait ToResponce{
+    fn to_responce(self) -> Response<File>;
+}
+impl ToResponce for File{
+    fn to_responce(self) -> Response<File> {
+       Response::from_file(self)
     }
 }
