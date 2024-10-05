@@ -31,6 +31,7 @@ pub(crate) trait ToResultPath {
     fn to_result_path(&self) -> ResultPath;
 }
 #[allow(dead_code)]
+#[derive(Debug)]
 pub enum ResultPath {
     /// File of type:
     /// ```
