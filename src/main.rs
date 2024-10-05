@@ -20,7 +20,7 @@ fn main() {
                 let _ = request.respond(file.to_response());
             }
             ResultPath::Directory(path) => {
-                match path.join("index.html").to_file() {
+                match path.join("index.html").open_file() {
                     Ok(file) => {
                         let _ = request.respond(file.to_response());
                     }
