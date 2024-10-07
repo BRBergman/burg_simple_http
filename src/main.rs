@@ -4,7 +4,8 @@ use tiny_http::{Response, Server};
 
 mod result_path;
 use result_path::{ResultPath, ToFile, ToResultPath};
-
+//https://doc.rust-lang.org/std/keyword.break.html
+//this is really cool^
 fn main() {
     let server = Server::http(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, 8000)).unwrap();
     println!("running");
