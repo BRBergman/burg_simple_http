@@ -3,13 +3,13 @@ use std::io::{self, Error};
 use std::path::{Path, PathBuf};
 
 impl ToResultPath for Path {
-    /// checks if the Path is a File, 
-    /// a Directory, 
+    /// checks if the Path is a File,
+    /// a Directory,
     /// or Neither
     /// ```
     /// use std::fs::File;
     /// use std::path::{Path, PathBuf};
-    /// 
+    ///
     /// let path_full = Path::new("/some/path/");
     /// match path_full.to_result_path() {
     ///     ResultPath::File(file) => {
@@ -66,10 +66,10 @@ impl ResultPath {
     }
 }
 
-pub (crate) trait ToFile{
+pub(crate) trait ToFile {
     fn open_file(&self) -> io::Result<File>;
 }
-impl ToFile for Path{
+impl ToFile for Path {
     fn open_file(&self) -> io::Result<File> {
         File::open(self)
     }

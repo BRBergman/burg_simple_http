@@ -8,8 +8,6 @@ use result_path::{ResultPath, ToFile, ToResultPath};
 //this is really cool^
 fn main() {
     let server = Server::http(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, 8000)).unwrap();
-    println!("running");
-    // test
     for request in server.incoming_requests() {
         let file_404_page = "404 :(".to_response();
         let path_full = std::env::current_dir()
