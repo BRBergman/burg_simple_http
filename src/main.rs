@@ -1,3 +1,4 @@
+use maud::{html,DOCTYPE};
 use std::net::{Ipv4Addr, SocketAddrV4};
 use std::{fs::File, path::Path};
 use tiny_http::{Response, Server};
@@ -9,6 +10,16 @@ use result_path::{ResultPath, ToFile, ToResultPath};
 fn main() {
     let server = Server::http(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, 8000)).unwrap();
     for request in server.incoming_requests() {
+        let folder_not_found =
+            html! {
+                (DOCTYPE)
+                html{
+                head{title{"empty folder"}}
+                body{
+                h1{"Missing Folder!"} 
+                p1{"guh"}}
+            }
+        }.into_string();
         let file_404_page = "404 :(".to_response();
         let path_full = std::env::current_dir()
             .unwrap()
@@ -26,7 +37,8 @@ fn main() {
                     }
                     Err(_) => {
                         //this is what happens if you try to open a folder that exists, but has no index.html
-                        let _ = request.respond(file_404_page);
+                        //let _ = request.respond(file_404_page);
+                        let _ = request.respond(Response::from_data(folder_not_found));
                     }
                 }
             }
