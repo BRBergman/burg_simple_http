@@ -1,3 +1,3 @@
-pub fn blog(page: i32)-> String{
+pub fn blog(page: String)-> String{
     format!("{}",page)
 }
