@@ -25,7 +25,6 @@ fn main() {
                 }
                 Err(_) => {
                     let iter: Vec<&str> = path.split('/').collect();
-                    println!("g");
                     let _ = request.respond(Response::from_data(site_from(iter)));
                     //request.respond(Response::from_string(file_404_page));
                 }

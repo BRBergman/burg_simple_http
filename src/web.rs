@@ -16,7 +16,7 @@ pub fn site_from(value: Vec<&str>) -> String {
         match value.last().unwrap().parse::<i32>() {
             Ok(x) => {
                 match value[value.len()-2]{
-                    "blog" => blog(format!("{}",x)),
+                    "blog" => blog(x),
                     _ => not_found(),
                 }
             },//we end in a number
@@ -27,17 +27,4 @@ pub fn site_from(value: Vec<&str>) -> String {
                 }
             },
         }
-}
-enum Pages{
-    home,
-    blog(&str),
-    notfound
-
-}
-pub fn site_from_file(value: Vec<&str>) -> String {
-
-    for q in value {
-
-    };
-    "sda".to_string()
 }
