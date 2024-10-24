@@ -2,7 +2,7 @@ use std::fs::File;
 use std::net::{Ipv4Addr, SocketAddrV4};
 use std::path::{Path, PathBuf};
 use tiny_http::{Response, Server};
-use web::site_from;
+use web::{site_from, site_from_better};
 mod web;
 //https://doc.rust-lang.org/std/keyword.break.html
 //this is really cool^
@@ -25,7 +25,7 @@ fn main() {
                 }
                 Err(_) => {
                     let iter: Vec<&str> = path.split('/').collect();
-                    let _ = request.respond(Response::from_data(site_from(iter)));
+                    let _ = request.respond(Response::from_data(site_from_better(iter)));
                     //request.respond(Response::from_string(file_404_page));
                 }
             };
