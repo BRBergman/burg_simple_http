@@ -2,10 +2,14 @@ use maud::{html, PreEscaped};
 
 pub fn blog(page: i32)-> String{
     let display_page =match page{
-        1 => html!({
+        1 => html!{
             div{"10/23"}
             div{"got sort of working!"}
-        }),
+        },
+        2 => html!{
+            div{"10/24"}
+            div{"i dont understand"}
+        },
 
        _ => Blog::blog_home()
     };
@@ -20,15 +24,13 @@ pub fn blog(page: i32)-> String{
         }
     ).into_string()
 }
-struct Blog{
+struct Blog{}
 
-}
 impl Blog{
     fn blog_home()-> PreEscaped<String>{
         html!(
-            {"welcome to the blog!"
-    
+            {"welcome to the burgblog!"
+
         })
-        
     }
 }

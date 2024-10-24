@@ -10,39 +10,35 @@ pub fn not_found() -> String {
 }
 
 // make better where we have a vector of the domain and we have a data structure of folders or something
-pub fn site_from(value: Vec<&str>) -> String {
-    println!("{:?}", value);
-    match value.last().unwrap().parse::<i32>() {
-        Ok(x) => match value[value.len() - 2] {
-            "blog" => blog(x),
-            _ => not_found(),
-        }, //we end in a number
-        Err(_) => match value[value.len() - 1] {
-            "home" => home(),
-            _ => not_found(),
-        },
-    }
-}
-
 pub fn site_from_better(value: Vec<&str>) -> String {
     println!("{:?}", value);
     match value[0].parse::<i32>() {
         Ok(x) => match value[value.len() - 1] {
            //we start with a number
-            _ => {println!("parsed");not_found()},
-        }, 
-        Err(_) => match value[0] {
-            "home" => home(),
-            "blog" => blog(
-                if value.len()>1{
-                    value[1].parse().unwrap_or_default()
-                }
-                else {
-                    -1
-                }
-
-            ),
             _ => not_found(),
+        }, 
+        Err(_) => match Page::from(*value.first().unwrap()) {
+            Page::Home => home(),
+            Page::Blog => blog(if value.len()>1{value[1].parse().unwrap_or_default()}else {-1}),
+            Page::NotFound => not_found(),
         },
+    }
+}
+
+#[forbid(dead_code)] // so that if we add ap age we have to make that page work
+enum Page {
+    Home,
+    Blog,
+    NotFound,
+}
+impl From<&str> for Page {
+    fn from(value: &str) -> Self {
+        match value {
+            "home" => Self::Home,
+            "blog" => Self::Blog,
+
+            _ => Self::NotFound
+        }
+        
     }
 }

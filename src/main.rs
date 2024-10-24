@@ -2,7 +2,7 @@ use std::fs::File;
 use std::net::{Ipv4Addr, SocketAddrV4};
 use std::path::{Path, PathBuf};
 use tiny_http::{Response, Server};
-use web::{site_from, site_from_better};
+use web::site_from_better;
 mod web;
 //https://doc.rust-lang.org/std/keyword.break.html
 //this is really cool^
