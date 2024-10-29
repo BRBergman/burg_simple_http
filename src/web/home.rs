@@ -1,8 +1,8 @@
-use std::time::SystemTime;
 
 use maud::{html, DOCTYPE};
 
 pub fn home() -> String {
+    let i = 0;
     html! {
         
             (DOCTYPE)
@@ -13,7 +13,7 @@ pub fn home() -> String {
             }
             body{
                 h1{"Home Page!"}
-                p1{"The time is: "((SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_nanos()))}
+                div{button href=("/")  { {(i)}}}
                 div{p1{"guh"}}
                 div{"hi"}
             

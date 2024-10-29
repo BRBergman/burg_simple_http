@@ -13,7 +13,7 @@ pub fn not_found() -> String {
 pub fn site_from_better(value: Vec<&str>) -> String {
     println!("{:?}", value);
     match value[0].parse::<i32>() {
-        Ok(x) => match value[value.len() - 1] {
+        Ok(_x) => match value[value.len() - 1] {
            //we start with a number
             _ => not_found(),
         }, 
