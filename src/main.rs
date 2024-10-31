@@ -14,21 +14,29 @@ fn main() {
             .unwrap()
             .join(Path::new("website"))
             .join(Path::new(&path));
-
-        println!("{}", path);
-        if path_full.is_file() {
-            let _ = request.respond(Response::from_file(File::open(path_full).unwrap()));
-        } else {
-            match File::open(path_full.join(PathBuf::from("index.html"))) {
-                Ok(x) => {
-                    let _ = request.respond(Response::from_file(x));
+        println!("{:?}",&path_full);//some reason files arent workign
+        match path_full.is_file() {
+            true => {
+                println!("{:?}",path_full.iter().last());
+                match File::open(&path_full){
+                    Ok(x) => {let _ = request.respond(Response::from_file(x));},
+                    Err(_) => todo!(),
                 }
-                Err(_) => {
-                    let iter: Vec<&str> = path.split('/').collect();
-                    let _ = request.respond(Response::from_data(site_from_better(iter)));
-                    //request.respond(Response::from_string(file_404_page));
-                }
-            };
+                //let _ = request.respond(Response::from_file(File::open(&path_full).unwrap()));
+                
+            }
+            false => {
+                match File::open(path_full.join(PathBuf::from("index.html"))) {
+                    Ok(x) => {
+                        let _ = request.respond(Response::from_file(x));
+                    }
+                    Err(_) => {
+                        let iter: Vec<&str> = path.split('/').collect();
+                        let _ = request.respond(Response::from_data(site_from_better(iter)));
+                        //request.respond(Response::from_string(file_404_page));
+                    }
+                };
+            }
         }
     }
 }
