@@ -12,7 +12,7 @@ fn main() {
         let path = String::from(request.url().trim_start_matches('/'));
         let path_full = std::env::current_dir()
             .unwrap()
-            .join(Path::new("web"))
+            .join(Path::new("website"))
             .join(Path::new(&path));
 
         println!("{}", path);
