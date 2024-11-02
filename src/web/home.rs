@@ -1,14 +1,14 @@
 
-use maud::{html, DOCTYPE};
+use maud::{html, PreEscaped, DOCTYPE};
 
 pub fn home() -> String {
     let i = 0;
     html! {
-        
             (DOCTYPE)
             html{
             head{
-                link rel="stylesheet" href="style.css";
+                //link rel="stylesheet" href="index.css";
+                (stylesheet("index.css"))
                 title{"home"}
             }
             body{
@@ -21,4 +21,10 @@ pub fn home() -> String {
         }
     }
     .into_string()
+}
+
+fn stylesheet(path:&str)-> PreEscaped<String>{
+    html!{
+        link rel="stylesheet" href=(path);
+    }
 }

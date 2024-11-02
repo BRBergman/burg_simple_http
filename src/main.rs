@@ -16,12 +16,7 @@ fn main() {
             .join(Path::new(&path));
         println!("{:?}", &path_full); //some reason files arent workign
         if path_full.is_file() {
-            match File::open(&path_full) {
-                Ok(x) => {
-                    let _ = request.respond(Response::from_file(x));
-                }
-                Err(_) => todo!(),
-            }
+            let _ = request.respond(Response::from_file(File::open(&path_full).unwrap()));
         } else {
             match File::open(path_full.join(PathBuf::from("index.html"))) {
                 Ok(x) => {
@@ -30,7 +25,6 @@ fn main() {
                 Err(_) => {
                     let iter: Vec<&str> = path.split('/').collect();
                     let _ = request.respond(Response::from_data(site_from_better(iter)));
-                    //request.respond(Response::from_string(file_404_page));
                 }
             };
         }
