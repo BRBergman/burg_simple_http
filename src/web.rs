@@ -8,9 +8,11 @@ pub mod home;
 pub fn not_found() -> PreEscaped<String> {
     html!( {h1{"Not Found"}})
 }
+#[derive(Debug, Clone)]
 pub struct Pages {
     pages: Vec<Page>,
 }
+#[derive(Debug, Clone)]
 struct Page {
     path: PathBuf,
     page: PreEscaped<String>,
@@ -21,16 +23,17 @@ impl Page {
     }
 }
 impl Pages {
-    pub fn get_page(self, path: PathBuf) -> PreEscaped<String> {
-        for page in self.pages {
-            println!("{:?}|{:?}", page.path, path);
+    pub fn get_page(&self, path: PathBuf) -> PreEscaped<String> {
+        for page in &self.pages {
             if page.path == path {
-                return page.page;
+                return page.page.clone();
             }
         }
         return not_found();
     }
-    pub fn default() -> Self {
+}
+impl Default for Pages{
+    fn default() -> Self {
         Pages {
             pages: vec![Page::new(PathBuf::from("home"), home())],
         }

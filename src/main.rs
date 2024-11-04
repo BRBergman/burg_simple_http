@@ -7,6 +7,7 @@ mod web;
 //https://doc.rust-lang.org/std/keyword.break.html
 //this is really cool^
 fn main() {
+    let pages = Pages::default();//gotta be a better way to do this
     let server = Server::http(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, 8000)).unwrap();
     for request in server.incoming_requests() {
         let path = PathBuf::from(String::from(request.url().trim_start_matches('/')));
@@ -14,7 +15,7 @@ fn main() {
             .unwrap()
             .join("website")
             .join(&path);
-        println!("{:?}", &path_full); //some reason files arent workign
+        println!("{:?}", &path); //some reason files arent workign
         if path_full.is_file() {
             let _ = request.respond(Response::from_file(File::open(&path_full).unwrap()));
         } else {
@@ -23,9 +24,7 @@ fn main() {
                     let _ = request.respond(Response::from_file(x));
                 }
                 Err(_) => {
-                    //let iter: Vec<&str> = path.split('/').collect();
-                    //let _ = request.respond(Response::from_data(site_from_better(iter)));
-                    let _ = request.respond(Response::from_data(Pages::default().get_page(path).into_string()));
+                    let _ = request.respond(Response::from_data(pages.get_page(path).into_string()));
                 }
             };
         }
