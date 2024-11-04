@@ -1,39 +1,38 @@
+use std::{path::PathBuf, vec};
+
 use home::home;
-use maud::html;
+use maud::{html, PreEscaped};
 
 pub mod home;
 
-pub fn not_found() -> String {
-    html!( {h1{"Not Found"}}).into_string()
+pub fn not_found() -> PreEscaped<String> {
+    html!( {h1{"Not Found"}})
 }
-
-// make better where we have a vector of the domain and we have a data structure of folders or something
-pub fn site_from_better(value: Vec<&str>) -> String {
-    println!("{:?}", value);
-    match value[0].parse::<i32>() {
-        Ok(_x) => match value[value.len() - 1] {
-           //we start with a number
-            _ => not_found(),
-        }, 
-        Err(_) => match Page::from(*value.first().unwrap()) {
-            Page::Home => home(),
-            Page::NotFound => not_found(),
-        },
+pub struct Pages {
+    pages: Vec<Page>,
+}
+struct Page {
+    path: PathBuf,
+    page: PreEscaped<String>,
+}
+impl Page {
+    fn new(path: PathBuf, page: PreEscaped<String>) -> Page {
+        Page { path, page }
     }
 }
-
-#[forbid(dead_code)] // so that if we add ap age we have to make that page work
-enum Page {
-    Home,
-    NotFound,
-}
-impl From<&str> for Page {
-    fn from(value: &str) -> Self {
-        match value {
-            "home" => Self::Home,
-
-            _ => Self::NotFound
+impl Pages {
+    pub fn get_page(self, path: PathBuf) -> PreEscaped<String> {
+        for page in self.pages {
+            println!("{:?}|{:?}", page.path, path);
+            if page.path == path {
+                return page.page;
+            }
         }
-        
+        return not_found();
+    }
+    pub fn default() -> Self {
+        Pages {
+            pages: vec![Page::new(PathBuf::from("home"), home())],
+        }
     }
 }

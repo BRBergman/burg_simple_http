@@ -1,7 +1,7 @@
 
 use maud::{html, PreEscaped, DOCTYPE};
 
-pub fn home() -> String {
+pub fn home() -> PreEscaped<String> {
     let i = 0;
     html! {
             (DOCTYPE)
@@ -20,7 +20,6 @@ pub fn home() -> String {
             }
         }
     }
-    .into_string()
 }
 
 fn stylesheet(path:&str)-> PreEscaped<String>{
