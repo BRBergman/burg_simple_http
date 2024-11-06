@@ -15,7 +15,7 @@ fn main() {
             .unwrap()
             .join("website")
             .join(&path);
-        println!("{:?}", &path); //some reason files arent workign
+        println!("Path: {}", &path.display()); 
         if path_full.is_file() {
             let _ = request.respond(Response::from_file(File::open(&path_full).unwrap()));
         } else {
