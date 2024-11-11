@@ -1,6 +1,7 @@
 
 use maud::{html, PreEscaped, DOCTYPE};
 
+use crate::web::css::stylesheet;
 pub fn home() -> PreEscaped<String> {
     let i = 0;
     html! {
@@ -19,11 +20,5 @@ pub fn home() -> PreEscaped<String> {
             
             }
         }
-    }
-}
-
-fn stylesheet(path:&str)-> PreEscaped<String>{
-    html!{
-        link rel="stylesheet" href=(path);
     }
 }

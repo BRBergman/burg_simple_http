@@ -3,6 +3,7 @@ use std::{path::PathBuf, vec};
 use home::home;
 use maud::{html, PreEscaped};
 
+pub mod css;
 pub mod home;
 
 pub fn not_found() -> PreEscaped<String> {
