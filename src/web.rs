@@ -25,6 +25,7 @@ impl Page {
 }
 impl Pages {
     pub fn get_page(&self, path: PathBuf) -> PreEscaped<String> {
+        println!("{}",path.display());
         for page in &self.pages {
             if page.path == path {
                 return page.page.clone();
