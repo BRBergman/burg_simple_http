@@ -24,16 +24,7 @@ impl Page {
         Page { path, page }
     }
 }
-impl Pages {
-    pub fn get_page(&self, path: PathBuf) -> PreEscaped<String> {
-        for page in &self.pages {
-            if page.path == path {
-                return page.page.clone();
-            }
-        }
-        return not_found();
-    }
-}
+
 impl Default for Pages {
     fn default() -> Self {
         Pages {
@@ -54,5 +45,13 @@ impl ToResponse for PathBuf {
                 Err(_) => Pages::default().get_page(self).into_string().into(),
             },
         })
+    }
+}
+impl Pages {
+    pub fn get_page(&self, path: PathBuf) -> PreEscaped<String> {
+        return match self.pages.iter().find(|&x| x.path == path){
+            Some(x) =>  x.page.clone(),
+            None => not_found(),
+        } 
     }
 }

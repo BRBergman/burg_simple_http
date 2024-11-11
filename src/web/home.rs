@@ -8,7 +8,6 @@ pub fn home() -> PreEscaped<String> {
             (DOCTYPE)
             html{
             head{
-                //link rel="stylesheet" href="index.css";
                 (stylesheet("index.css"))
                 title{"home"}
             }

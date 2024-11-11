@@ -13,7 +13,7 @@ fn http_server() {
     let server = Server::http(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, 8000)).unwrap();
     server.incoming_requests().into_iter().for_each(|x| {
         let url = PathBuf::from(x.url().trim_start_matches('/'));
-        println!("{}", url.display());
+        println!("Url: {}",url.display());
         x.respond(url.to_response()).unwrap()
     });
 }
