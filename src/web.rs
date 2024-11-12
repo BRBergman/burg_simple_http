@@ -1,14 +1,16 @@
-use std::{path::PathBuf, vec};
 use home::home;
 use maud::{html, PreEscaped};
 use std::io::Cursor;
+use std::{path::PathBuf, vec};
 use tiny_http::Response;
 
 pub mod css;
 pub mod home;
-
+fn guh() -> PreEscaped<String> {
+    html!(h1{"guh"})
+}
 pub fn not_found() -> PreEscaped<String> {
-    html!( {h1{"Not Found"}})
+    html!(h1{"Not Found"})
 }
 #[derive(Debug, Clone)]
 pub struct Pages {
@@ -28,7 +30,10 @@ impl Page {
 impl Default for Pages {
     fn default() -> Self {
         Pages {
-            pages: vec![Page::new(PathBuf::from("home"), home())],
+            pages: vec![
+                Page::new(PathBuf::from("home"), home()),
+                Page::new(PathBuf::from("buh/guh"), guh()),
+            ],
         }
     }
 }
@@ -42,16 +47,13 @@ impl ToResponse for PathBuf {
             Ok(x) => x,
             Err(_) => match std::fs::read(env.join(&self).join("index.html")) {
                 Ok(x) => x,
-                Err(_) => Pages::default().get_page(self).into_string().into(),
+                Err(_) => match Pages::default().pages.iter().find(|&x| x.path == self) {
+                    Some(x) => x.page.clone(),
+                    None => not_found(),
+                }
+                .into_string()
+                .into(),
             },
         })
-    }
-}
-impl Pages {
-    pub fn get_page(&self, path: PathBuf) -> PreEscaped<String> {
-        return match self.pages.iter().find(|&x| x.path == path){
-            Some(x) =>  x.page.clone(),
-            None => not_found(),
-        } 
     }
 }
