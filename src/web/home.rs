@@ -2,6 +2,7 @@
 use maud::{html, PreEscaped, DOCTYPE};
 
 use crate::web::css::stylesheet;
+#[inline]
 pub fn home() -> PreEscaped<String> {
     let i = 0;
     html! {
