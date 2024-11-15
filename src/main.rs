@@ -3,9 +3,7 @@ use std::path::PathBuf;
 use std::thread::spawn;
 use tiny_http::Server;
 mod web;
-use web::ToResponse;
-//https://doc.rust-lang.org/std/keyword.break.html
-//this is really cool^
+use web::ToWebResponse;
 fn main() {
     let server = Server::http(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, 8000)).unwrap();
     spawn(move || http_server(server));
@@ -17,6 +15,6 @@ fn http_server(server: Server) {
     server.incoming_requests().into_iter().for_each(|x| {
         let url = PathBuf::from(x.url().trim_start_matches('/'));
         println!("Url: {}", url.display());
-        x.respond(url.to_response()).unwrap()
+        x.respond(url.to_web_response()).unwrap()
     });
 }
