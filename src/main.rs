@@ -12,9 +12,9 @@ fn main() {
     std::io::stdin().read_line(&mut buf).unwrap();
 }
 fn http_server(server: Server) {
-    server.incoming_requests().into_iter().for_each(|x| {
+    server.incoming_requests().into_iter().enumerate().for_each(|(i,x)| {
         let url = PathBuf::from(x.url().trim_start_matches('/'));
-        println!("Url: {}", url.display());
+        println!("Fetch {} | Url: {}",i, url.display());
         x.respond(url.to_web_response()).unwrap()
     });
 }
