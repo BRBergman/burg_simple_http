@@ -1,4 +1,3 @@
-
 use maud::{html, PreEscaped, DOCTYPE};
 
 use crate::web::css::stylesheet;
@@ -17,7 +16,7 @@ pub fn home() -> PreEscaped<String> {
                 div{button href=("/")  { {(i)}}}
                 div{p1{"guh"}}
                 div{"hi"}
-            
+
             }
         }
     }

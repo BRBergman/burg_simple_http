@@ -28,10 +28,7 @@ impl Page {
 impl Default for Pages {
     fn default() -> Self {
         Pages {
-            pages: vec![
-                Page::new(PathBuf::from("home"), home()),
-
-            ],
+            pages: vec![Page::new(PathBuf::from("home"), home())],
         }
     }
 }
