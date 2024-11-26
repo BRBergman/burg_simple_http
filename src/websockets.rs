@@ -34,12 +34,13 @@ pub fn convert_key(input: &str) -> String {
 
 pub fn websocket_server(server: Server) {
     let port = server.server_addr().to_ip().unwrap().port();
-    spawn(move || {
-        server
-            .incoming_requests()
-            .into_iter()
-            .enumerate()
-            .for_each(|(_i, request)| {
+
+    server
+        .incoming_requests()
+        .into_iter()
+        .enumerate()
+        .for_each(|(_i, request)| {
+            spawn(move || {
                 let url = PathBuf::from(request.url().trim_start_matches('/'));
                 match request
                     .headers()
@@ -56,10 +57,9 @@ pub fn websocket_server(server: Server) {
                         request
                             .respond(url.to_web_response(port))
                             .expect("Responded");
-                        println!("hi");
                         return;
                     }
-                    _ => println!("gf"),
+                    _ => (),
                 }
                 let key = match request
                     .headers()
@@ -112,6 +112,5 @@ pub fn websocket_server(server: Server) {
                     };
                 }
             });
-        println!("bottom")
-    });
+        });
 }

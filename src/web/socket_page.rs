@@ -1,7 +1,7 @@
-use maud::PreEscaped;
+use std::io::Cursor;
 
-pub fn socket_page(port: u16) -> PreEscaped<String> {
-    PreEscaped(format!(
+pub fn socket_page(port: u16) -> tiny_http::Response<Cursor<Vec<u8>>> {
+    tiny_http::Response::from_string(format!(
         "
         <script type=\"text/javascript\">
         var socket = new WebSocket(\"ws://localhost:{}/\", \"ping\");
@@ -23,4 +23,9 @@ pub fn socket_page(port: u16) -> PreEscaped<String> {
     ",
         port
     ))
+    .with_header(
+        "Content-type: text/html"
+            .parse::<tiny_http::Header>()
+            .unwrap(),
+    )
 }

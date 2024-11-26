@@ -11,17 +11,15 @@ pub mod socket_page;
 pub fn not_found() -> PreEscaped<String> {
     html!(h1{"Not Found"})
 }
-#[derive(Debug, Clone)]
 pub struct Pages {
     pages: Vec<Page>,
 }
-#[derive(Debug, Clone)]
 struct Page {
     path: PathBuf,
-    page: PreEscaped<String>,
+    page: tiny_http::Response<Cursor<Vec<u8>>>,
 }
 impl Page {
-    fn new(path: PathBuf, page: PreEscaped<String>) -> Page {
+    fn new(path: PathBuf, page: tiny_http::Response<Cursor<Vec<u8>>>) -> Page {
         Page { path, page }
     }
 }
@@ -42,22 +40,15 @@ pub trait ToWebResponse {
 impl ToWebResponse for PathBuf {
     fn to_web_response(self, port: u16) -> Response<Cursor<Vec<u8>>> {
         let env = std::env::current_dir().unwrap().join("website");
-        Response::from_data(match std::fs::read(env.join(&self)) {
-            Ok(x) => x,
+        match std::fs::read(env.join(&self)) {
+            Ok(x) => Response::from_data(x),
             Err(_) => match std::fs::read(env.join(&self).join("index.html")) {
-                Ok(x) => x,
-                Err(_) => match Pages::get(port).pages.iter().find(|&x| x.path == self) {
-                    Some(x) => x.page.clone(),
-                    None => not_found(),
-                }
-                .into_string()
-                .into(),
+                Ok(x) => Response::from_data(x),
+                Err(_) => match Pages::get(port).pages.into_iter().find(|x| x.path == self) {
+                    Some(x) => x.page,
+                    None => Response::from_data(not_found().into_string()),
+                },
             },
-        })
-        .with_header(
-            "Content-type: text/html"
-                .parse::<tiny_http::Header>()
-                .unwrap(),
-        )
+        }
     }
 }
