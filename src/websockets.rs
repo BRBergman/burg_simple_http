@@ -39,7 +39,7 @@ pub fn websocket_server(server: Server) {
             .incoming_requests()
             .into_iter()
             .enumerate()
-            .for_each(|(i, request)| {
+            .for_each(|(_i, request)| {
                 let url = PathBuf::from(request.url().trim_start_matches('/'));
                 match request
                     .headers()
