@@ -1,4 +1,4 @@
-use maud::{html, PreEscaped, DOCTYPE};
+use maud::{html, DOCTYPE};
 
 use crate::web::css::stylesheet;
 #[inline]

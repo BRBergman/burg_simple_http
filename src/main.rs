@@ -11,16 +11,3 @@ fn main() {
     let mut buf = String::new();
     std::io::stdin().read_line(&mut buf).unwrap();
 }
-/* this is no longer the server i am using
-fn http_server(server: Server) {
-    server
-        .incoming_requests()
-        .into_iter()
-        .enumerate()
-        .for_each(|(i, x)| {
-            let url = PathBuf::from(x.url().trim_start_matches('/'));
-            println!("Fetch {} | Url: {}", i, url.display());
-            x.respond(url.to_web_response(server.server_addr().to_ip().unwrap().port()))
-                .unwrap()
-        });
-}*/

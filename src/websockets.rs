@@ -34,12 +34,12 @@ pub fn convert_key(input: &str) -> String {
 
 pub fn websocket_server(server: Server) {
     let port = server.server_addr().to_ip().unwrap().port();
-
     server
         .incoming_requests()
         .into_iter()
         .enumerate()
-        .for_each(|(_i, request)| {
+        .for_each(|(i, request)| {
+            println!("Fetch {} | Url: {}", i, request.url());
             spawn(move || {
                 let url = PathBuf::from(request.url().trim_start_matches('/'));
                 match request
