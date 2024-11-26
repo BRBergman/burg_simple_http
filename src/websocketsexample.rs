@@ -1,14 +1,11 @@
-//https://github.com/tiny-http/tiny-http/blob/master/examples/websockets.rs
-
 extern crate rustc_serialize;
 extern crate sha1;
 extern crate tiny_http;
 
+use rustc_serialize::base64::{Config, Newline, Standard, ToBase64};
 use std::io::Cursor;
 use std::io::Read;
 use std::thread::spawn;
-
-use rustc_serialize::base64::{Config, Newline, Standard, ToBase64};
 
 fn home_page(port: u16) -> tiny_http::Response<Cursor<Vec<u8>>> {
     tiny_http::Response::from_string(format!(
@@ -43,7 +40,7 @@ fn home_page(port: u16) -> tiny_http::Response<Cursor<Vec<u8>>> {
 /// Turns a Sec-WebSocket-Key into a Sec-WebSocket-Accept.
 /// Feel free to copy-paste this function, but please use a better error handling.
 fn convert_key(input: &str) -> String {
-    use sha1::Sha1;
+    use sha1::{Digest, Sha1};
 
     let mut input = input.to_string().into_bytes();
     let mut bytes = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
@@ -54,16 +51,20 @@ fn convert_key(input: &str) -> String {
     let mut sha1 = Sha1::new();
     sha1.update(&input);
 
-    sha1.digest().bytes().to_base64(Config {
-        char_set: Standard,
-        pad: true,
-        line_length: None,
-        newline: Newline::LF,
-    })
+    sha1.finalize()
+        .bytes()
+        .map(|x| x.unwrap())
+        .collect::<Vec<u8>>()
+        .to_base64(Config {
+            char_set: Standard,
+            pad: true,
+            line_length: None,
+            newline: Newline::LF,
+        })
 }
 
-fn main() {
-    let server = tiny_http::Server::http("0.0.0.0:0").unwrap();
+pub fn masin() {
+    let server = tiny_http::Server::http("0.0.0.0:8000").unwrap();
     let port = server.server_addr().to_ip().unwrap().port();
 
     println!("Server started");
@@ -135,7 +136,9 @@ fn main() {
                     Ok(n) if n >= 1 => {
                         // "Hello" frame
                         let data = [0x81, 0x05, 0x48, 0x65, 0x6c, 0x6c, 0x6f];
+                        //let data = [1,2,3];
                         stream.write(&data).ok();
+
                         stream.flush().ok();
                     }
                     Ok(_) => panic!("eof ; should never happen"),
