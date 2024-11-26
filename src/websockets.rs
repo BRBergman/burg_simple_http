@@ -92,7 +92,7 @@ pub fn websocket_server(server: Server) {
                 //
                 let mut stream = request.upgrade("websocket", response);
 
-                //
+                //somehow make this depend on the page
                 loop {
                     let mut out = Vec::new();
                     match Read::by_ref(&mut stream).take(1).read_to_end(&mut out) {
