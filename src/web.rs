@@ -2,8 +2,9 @@ use home::home;
 use maud::{html, PreEscaped};
 use socket_page::socket_page;
 use std::io::Cursor;
+use std::thread::spawn;
 use std::{path::PathBuf, vec};
-use tiny_http::Response;
+use tiny_http::{Response, Server};
 pub mod css;
 pub mod home;
 pub mod socket_page;
@@ -51,4 +52,12 @@ impl ToWebResponse for PathBuf {
             },
         }
     }
+}
+pub fn web_server(server: Server) {
+    server.incoming_requests().into_iter().for_each(|x| {
+        let port = x.remote_addr().unwrap().port();
+        let url = PathBuf::from(x.url().trim_start_matches('/'));
+        println!("Url: {}", url.display());
+        spawn(move || x.respond(url.to_web_response(port)).unwrap());
+    });
 }

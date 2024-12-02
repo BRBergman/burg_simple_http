@@ -23,13 +23,12 @@ pub fn convert_key(input: &str) -> String {
     let result = hasher.finalize();
 
     //make it a string??
-    let rerun = result.to_base64(Config {
+    result.to_base64(Config {
         char_set: Standard,
         pad: true,
         line_length: None,
         newline: Newline::LF,
-    });
-    rerun
+    })
 }
 
 pub fn websocket_server(server: Server) {
@@ -98,7 +97,7 @@ pub fn websocket_server(server: Server) {
                     match Read::by_ref(&mut stream).take(1).read_to_end(&mut out) {
                         Ok(n) if n >= 1 => {
                             // "Hello" frame
-                            let data = [0x81, 0x05, 0x48, 0x65, 0x6c, 0x6c, 0x6f];                           
+                            let data = [0x81, 0x05, 0x48, 0x65, 0x6c, 0x6c, 0x6f];
                             //let data = [1,2,3];
                             stream.write(&data).ok();
 

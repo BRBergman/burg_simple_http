@@ -2,7 +2,6 @@ use std::io::Cursor;
 
 use maud::{html, PreEscaped};
 
-
 pub fn socket_page(port: u16) -> tiny_http::Response<Cursor<Vec<u8>>> {
     tiny_http::Response::from_data(html!{(websocket_bloat(port))
         p{"This example will receive \"Hello\" for each byte in the packet being sent. Tiny-http doesn't support decoding websocket frames, so we can't do anything better."}
