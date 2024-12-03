@@ -13,7 +13,7 @@ fn not_found() -> Response<Cursor<Vec<u8>>> {
 fn dir_not_found() -> Response<Cursor<Vec<u8>>> {
     Response::from_data(html!(h1{"Directory Error! ENV folder not found!"}).into_string())
 }
-pub struct Pages {
+pub struct PageRoot {
     pages: Vec<Page>,
 }
 struct Page {
@@ -26,11 +26,14 @@ impl Page {
     }
 }
 
-impl Pages {
-    fn get() -> Self {
-        Pages {
+impl PageRoot {
+    fn list() -> Self {
+        PageRoot {
             pages: vec![Page::new(PathBuf::from("home"), home())],
         }
+    }
+    fn get_page(self, path: PathBuf) -> Option<Page> {
+        self.pages.into_iter().find(|x| x.path == path)
     }
 }
 pub trait ToWebResponse {
@@ -41,7 +44,7 @@ impl ToWebResponse for PathBuf {
         let env = match std::env::current_dir() {
             Ok(x) => x,
             Err(err) => {
-                println!("finding local directory error: {}",err);
+                println!("finding local directory error: {}", err);
                 return dir_not_found();
             }
         }
@@ -50,7 +53,7 @@ impl ToWebResponse for PathBuf {
             Ok(x) => Response::from_data(x),
             Err(_) => match std::fs::read(env.join(&self).join("index.html")) {
                 Ok(x) => Response::from_data(x),
-                Err(_) => match Pages::get().pages.into_iter().find(|x| x.path == self) {
+                Err(_) => match PageRoot::list().get_page(self) {
                     Some(x) => x.page,
                     None => not_found(),
                 },
