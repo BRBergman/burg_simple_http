@@ -1,5 +1,5 @@
 use home::home;
-use maud::{html, PreEscaped};
+use maud::html;
 use std::io::Cursor;
 use std::thread::spawn;
 use std::{path::PathBuf, vec};
@@ -7,8 +7,11 @@ use tiny_http::{Response, Server};
 pub mod css;
 pub mod home;
 
-pub fn not_found() -> PreEscaped<String> {
-    html!(h1{"Not Found"})
+fn not_found() -> Response<Cursor<Vec<u8>>> {
+    Response::from_data(html!(h1{"Not Found"}).into_string())
+}
+fn dir_not_found() -> Response<Cursor<Vec<u8>>> {
+    Response::from_data(html!(h1{"Directory Error! ENV folder not found!"}).into_string())
 }
 pub struct Pages {
     pages: Vec<Page>,
@@ -35,19 +38,21 @@ pub trait ToWebResponse {
 }
 impl ToWebResponse for PathBuf {
     fn to_web_response(self) -> Response<Cursor<Vec<u8>>> {
-        let env = std::env::current_dir()
-            .unwrap_or({
-                println!("err finding current dir");
-                PathBuf::from("err")
-            })
-            .join("website");
+        let env = match std::env::current_dir() {
+            Ok(x) => x,
+            Err(err) => {
+                println!("finding local directory error: {}",err);
+                return dir_not_found();
+            }
+        }
+        .join("website");
         match std::fs::read(env.join(&self)) {
             Ok(x) => Response::from_data(x),
             Err(_) => match std::fs::read(env.join(&self).join("index.html")) {
                 Ok(x) => Response::from_data(x),
                 Err(_) => match Pages::get().pages.into_iter().find(|x| x.path == self) {
                     Some(x) => x.page,
-                    None => Response::from_data(not_found().into_string()),
+                    None => not_found(),
                 },
             },
         }
