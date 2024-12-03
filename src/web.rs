@@ -21,15 +21,21 @@ struct Page {
     page: tiny_http::Response<Cursor<Vec<u8>>>,
 }
 impl Page {
-    fn new(path: PathBuf, page: tiny_http::Response<Cursor<Vec<u8>>>) -> Page {
-        Page { path, page }
+    fn new<P>(path: P, page: tiny_http::Response<Cursor<Vec<u8>>>) -> Page
+    where
+        P: Into<PathBuf>,
+    {
+        Page {
+            path: path.into(),
+            page,
+        }
     }
 }
 
 impl PageRoot {
     fn list() -> Self {
         PageRoot {
-            pages: vec![Page::new(PathBuf::from("home"), home())],
+            pages: vec![Page::new("home", home())],
         }
     }
     fn get_page(self, path: PathBuf) -> Option<Page> {
