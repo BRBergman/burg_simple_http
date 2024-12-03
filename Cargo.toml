@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-hex-literal = "0.4.1"
+#hex-literal = "0.4.1"
 maud = "0.26.0"
-rustc-serialize = "0.3.25"
-sha1 = "0.10.6"
+#rustc-serialize = "0.3.25"
+#sha1 = "0.10.6"
 tiny_http = "0.12.0"

@@ -15,7 +15,7 @@ pub fn home() -> tiny_http::Response<std::io::Cursor<Vec<u8>>> {
                 body{
                     h1{"Home Page!"}
                     div{button href=("/")  { {(i)}}}
-                    div{p1{"guh"}}
+                    div{p1{"gugfjksfgljkgfdlkjdh"}}
                     div{"hi"}
 
                 }
