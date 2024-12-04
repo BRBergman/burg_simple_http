@@ -12,6 +12,9 @@ pub fn icon(path: &str) -> PreEscaped<String> {
         link rel="icon" href=(path);
     }
 }
-pub fn title(name: &str) -> PreEscaped<String>{
-    html!{title{(name)}}
+pub fn title(name: &str) -> PreEscaped<String> {
+    html! {title{(name)}}
+}
+pub fn script(script_file: &str) -> PreEscaped<String> {
+    PreEscaped(format!(r#"<script src="{}"></script>"#, script_file))
 }

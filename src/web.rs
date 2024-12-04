@@ -1,10 +1,14 @@
 use home::*;
-use maud::html;
+use htmx::htmx_test;
+use maud::{html, PreEscaped};
 use std::io::Cursor;
+use std::rc::Rc;
+use std::sync::{Arc, LazyLock};
 use std::thread::spawn;
 use std::{path::PathBuf, vec};
 use tiny_http::{Response, Server};
 pub mod home;
+pub mod htmx;
 pub mod web_addons;
 
 fn not_found() -> Response<Cursor<Vec<u8>>> {
@@ -23,28 +27,37 @@ pub struct PageRoot {
 }
 struct Page {
     path: PathBuf,
-    page: tiny_http::Response<Cursor<Vec<u8>>>,
+    name: String,
+    page: Vec<u8>,
 }
 impl Page {
-    fn new<P>(path: P, page: tiny_http::Response<Cursor<Vec<u8>>>) -> Page
+    fn new<P, N>(path: P, name: N, page: Vec<u8>) -> Page
     where
         P: Into<PathBuf>,
+        N: ToString,
     {
         Page {
             path: path.into(),
+            name: name.to_string(),
             page,
         }
     }
 }
+static LIST: LazyLock<PageRoot> = std::sync::LazyLock::new(|| PageRoot::list());
 
 impl PageRoot {
     fn list() -> Self {
         PageRoot {
-            pages: vec![Page::new("home", home()), Page::new("home2", home2())],
+            pages: vec![
+                Page::new("home", "Home Page", home().into()),
+                Page::new("home2", "Home Page 2", home2().into()),
+                Page::new("htmx_test", "Htmx Test Page", htmx_test().into()),
+            ],
         }
     }
-    fn get_page(self, path: PathBuf) -> Option<Page> {
-        self.pages.into_iter().find(|x| x.path == path)
+    fn get_page(&self, path: PathBuf) -> Option<&Page> {
+        let x = self;
+        x.pages.iter().find(|&x| x.path == path)
     }
 }
 pub trait ToWebResponse {
@@ -62,8 +75,8 @@ impl ToWebResponse for PathBuf {
         .join("website");
         match std::fs::read(env.join(&self)) {
             Err(_) => match std::fs::read(env.join(&self).join("index.html")) {
-                Err(_) => match PageRoot::list().get_page(self) {
-                    Some(x) => x.page,
+                Err(_) => match LIST.get_page(self) {
+                    Some(x) => Response::from_data(x.page.clone()),
                     None => not_found(),
                 },
                 Ok(x) => Response::from_data(x),

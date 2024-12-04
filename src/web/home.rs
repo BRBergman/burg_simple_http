@@ -2,31 +2,29 @@ use maud::{html, PreEscaped, DOCTYPE};
 
 use crate::web::web_addons::{icon, stylesheet, title};
 #[inline]
-pub fn home() -> tiny_http::Response<std::io::Cursor<Vec<u8>>> {
+pub fn home() -> String {
     let i = 0;
-    tiny_http::Response::from_data(
-        html! {
-                (DOCTYPE)
-                html{
-                head{
-                    (stylesheet("index.css"))
-                    title{"home"}
-                }
-                body{
-                    h1{"Home Page!"}
-                    div{button href=("/")  { {(i)}}}
-                    div{p1{"gugfjksfgljkgfdlkjdh"}}
-                    div{"hi"}
 
-                }
+    html! {
+            (DOCTYPE)
+            html{
+            head{
+                (stylesheet("index.css"))
+                title{"home"}
+            }
+            body{
+                h1{"Home Page!"}
+                div{button href=("/")  { {(i)}}}
+                div{p1{"gugfjksfgljkgfdlkjdh"}}
+                div{"hi"}
             }
         }
-        .into_string(),
-    )
+    }
+    .into_string()
 }
 
 //eventually rewrite with maud
-pub fn home2() -> tiny_http::Response<std::io::Cursor<Vec<u8>>> {
+pub fn home2() -> String {
     let x = html! {
         (DOCTYPE)
         html{
@@ -36,13 +34,14 @@ pub fn home2() -> tiny_http::Response<std::io::Cursor<Vec<u8>>> {
             (icon("favicon.png"))
         }
         body{
-
-            
+            (PreEscaped(r#"<meta name="description" content="burg's website">"#))
+            //h1{class="heading" ("burgburg.net")}
         }
         }
     };
-    
-let y = PreEscaped({r#"<!DOCTYPE html>
+
+    let y = PreEscaped({
+        r#"<!DOCTYPE html>
 <html>
 
 <body>
@@ -241,8 +240,8 @@ let y = PreEscaped({r#"<!DOCTYPE html>
     </h1>
 </body>
 
-</html>"#});
-let z = x.into_string() + &y.into_string();
-tiny_http::Response::from_data(
-z)
+</html>"#
+    });
+    let z = x.into_string() + &y.into_string();
+    z
 }
