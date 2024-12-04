@@ -8,10 +8,15 @@ pub mod css;
 pub mod home;
 
 fn not_found() -> Response<Cursor<Vec<u8>>> {
-    Response::from_data(html!(h1{"Not Found"}).into_string())
+    Response::from_data(html! {h1{"Not Found"}}.into_string())
 }
 fn dir_not_found() -> Response<Cursor<Vec<u8>>> {
-    Response::from_data(html!(h1{"Directory Error! ENV folder not found!"}).into_string())
+    Response::from_data(
+        html! {
+        h1{"Directory Error! ENV folder not found!"}
+        p{"dont worry, this is a problem on the server, not the user"}}
+        .into_string(),
+    )
 }
 pub struct PageRoot {
     pages: Vec<Page>,
@@ -56,14 +61,14 @@ impl ToWebResponse for PathBuf {
         }
         .join("website");
         match std::fs::read(env.join(&self)) {
-            Ok(x) => Response::from_data(x),
             Err(_) => match std::fs::read(env.join(&self).join("index.html")) {
-                Ok(x) => Response::from_data(x),
                 Err(_) => match PageRoot::list().get_page(self) {
                     Some(x) => x.page,
                     None => not_found(),
                 },
+                Ok(x) => Response::from_data(x),
             },
+            Ok(x) => Response::from_data(x),
         }
     }
 }
