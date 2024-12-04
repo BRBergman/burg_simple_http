@@ -1,11 +1,11 @@
-use home::home;
+use home::*;
 use maud::html;
 use std::io::Cursor;
 use std::thread::spawn;
 use std::{path::PathBuf, vec};
 use tiny_http::{Response, Server};
-pub mod css;
 pub mod home;
+pub mod web_addons;
 
 fn not_found() -> Response<Cursor<Vec<u8>>> {
     Response::from_data(html! {h1{"Not Found"}}.into_string())
@@ -40,7 +40,7 @@ impl Page {
 impl PageRoot {
     fn list() -> Self {
         PageRoot {
-            pages: vec![Page::new("home", home())],
+            pages: vec![Page::new("home", home()), Page::new("home2", home2())],
         }
     }
     fn get_page(self, path: PathBuf) -> Option<Page> {
