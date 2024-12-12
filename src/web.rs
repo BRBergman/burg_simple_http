@@ -2,13 +2,13 @@ use home::*;
 use maud::html;
 use pages::Page;
 use std::io::Cursor;
-use std::thread::spawn;
 use std::path::PathBuf;
+use std::thread::spawn;
 use tiny_http::{Response, Server};
 pub mod home;
 pub mod htmx;
-pub mod web_addons;
 pub mod pages;
+pub mod web_addons;
 
 pub fn not_found() -> String {
     html! {h1{"Not Found"}}.into_string()
@@ -16,10 +16,11 @@ pub fn not_found() -> String {
 fn dir_not_found() -> Response<Cursor<Vec<u8>>> {
     Response::from_data(
         html! {
-        h1{"Directory Error! ENV folder not found!"}
-        p{"dont worry, this is a problem on the server, not the user"}}
+        h1{"Error 500"}
+        p{"Directory Error! ENV folder not found!"}}
         .into_string(),
     )
+    .with_status_code(500)
 }
 
 pub trait ToWebResponse {
@@ -37,10 +38,10 @@ impl ToWebResponse for PathBuf {
         .join("website");
         match std::fs::read(env.join(&self)) {
             Err(_) => match std::fs::read(env.join(&self).join("index.html")) {
-                Err(_) => Response::from_data( Page::from(self).get()),
-                Ok(x) => Response::from_data(x),
+                Err(_) => Page::from(self).get(),
+                Ok(x) => Response::from_data(x).with_status_code(200),
             },
-            Ok(x) => Response::from_data(x),
+            Ok(x) => Response::from_data(x).with_status_code(200),
         }
     }
 }
