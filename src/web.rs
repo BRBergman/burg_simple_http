@@ -10,9 +10,6 @@ pub mod htmx;
 pub mod pages;
 pub mod web_addons;
 
-pub fn not_found() -> String {
-    html! {h1{"Not Found"}}.into_string()
-}
 fn dir_not_found() -> Response<Cursor<Vec<u8>>> {
     Response::from_data(
         html! {
@@ -38,7 +35,7 @@ impl ToWebResponse for PathBuf {
         .join("website");
         match std::fs::read(env.join(&self)) {
             Err(_) => match std::fs::read(env.join(&self).join("index.html")) {
-                Err(_) => Page::from(self).get(),
+                Err(_) => Page::get(self),
                 Ok(x) => Response::from_data(x).with_status_code(200),
             },
             Ok(x) => Response::from_data(x).with_status_code(200),

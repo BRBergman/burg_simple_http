@@ -1,32 +1,44 @@
-use super::{home, home2, htmx::htmx_test, not_found};
-use std::path::PathBuf;
+use super::{home, home2, htmx::htmx_test};
+use maud::html;
+use std::{collections::HashMap, fmt, path::PathBuf, sync::LazyLock};
 use tiny_http::Response;
 #[deny(unused)] //so that if it errors i know i need to put another in the from
+#[derive(Hash, Clone, Copy, PartialEq, Eq)]
 pub enum Page {
-    None,
     Home,
     Home2,
     HtmxTest,
 }
-impl From<PathBuf> for Page {
-    fn from(value: PathBuf) -> Self {
-        match value.as_os_str().to_str() {
-            Some("home") => Page::Home,
-            Some("home2") => Page::Home2,
-            Some("htmx_test") => Page::HtmxTest,
-            _ => Page::None,
+
+impl Page {
+    pub const HM: LazyLock<HashMap<Page, String>> = LazyLock::new(|| {
+        HashMap::from([
+            //(Page::None,not_found()),
+            (Page::Home, home()),
+            (Page::Home2, home2()),
+            (Page::HtmxTest, htmx_test()),
+        ])
+    });
+    fn not_found() -> String {
+        html! {h1{"Not Found"}}.into_string()
+    }
+    pub fn get(page_dir: PathBuf) -> Response<std::io::Cursor<Vec<u8>>> {
+        match Self::HM.iter().find(|(&z, _)| {
+            z.to_string() == page_dir.as_os_str().to_str().unwrap_or("").to_string()
+        }) {
+            Some(x) => Response::from_data(x.1.to_owned()).with_status_code(200),
+            None => Response::from_data(Self::not_found()).with_status_code(404),
         }
     }
 }
-impl Page {
-    pub fn get(self) -> Response<std::io::Cursor<Vec<u8>>> {
-        let x = match self {
-            Page::None => return Response::from_data(not_found()).with_status_code(404),
-            Page::Home => home(),
-            Page::Home2 => home2(),
-            Page::HtmxTest => htmx_test(),
-        };
-        Response::from_data(x).with_status_code(200)
+impl fmt::Display for Page {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Page::Home => write!(f, "home"),
+            Page::Home2 => write!(f, "home2"),
+            Page::HtmxTest => write!(f, "htmx_test"),
+        }
     }
 }
+
 
