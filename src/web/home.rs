@@ -1,47 +1,51 @@
 use maud::{html, PreEscaped, DOCTYPE};
 
 use crate::web::web_addons::{icon, stylesheet, title};
-#[inline]
-pub fn home() -> String {
-    let i = 0;
 
-    html! {
+use super::pages::Home;
+
+impl Home {
+    pub fn home() -> String {
+        let i = 0;
+
+        html! {
+                (DOCTYPE)
+                html{
+                head{
+                    (stylesheet("index.css"))
+                    title{"home"}
+                }
+                body{
+                    h1{"Home Page!"}
+                    div{button href=("/")  { {(i)}}}
+                    div{p1{"gugfjksfgljkgfdlkjdh"}}
+                    div{"hi"}
+                }
+            }
+        }
+        .into_string()
+    }
+}
+impl Home {
+    //eventually rewrite with maud
+    pub fn home2() -> String {
+        let x = html! {
             (DOCTYPE)
             html{
             head{
+                (title("Burg's Room"))
                 (stylesheet("index.css"))
-                title{"home"}
+                (icon("favicon.png"))
             }
             body{
-                h1{"Home Page!"}
-                div{button href=("/")  { {(i)}}}
-                div{p1{"gugfjksfgljkgfdlkjdh"}}
-                div{"hi"}
+                (PreEscaped(r#"<meta name="description" content="burg's website">"#))
+                //h1{class="heading" ("burgburg.net")}
             }
-        }
-    }
-    .into_string()
-}
+            }
+        };
 
-//eventually rewrite with maud
-pub fn home2() -> String {
-    let x = html! {
-        (DOCTYPE)
-        html{
-        head{
-            (title("Burg's Room"))
-            (stylesheet("index.css"))
-            (icon("favicon.png"))
-        }
-        body{
-            (PreEscaped(r#"<meta name="description" content="burg's website">"#))
-            //h1{class="heading" ("burgburg.net")}
-        }
-        }
-    };
-
-    let y = PreEscaped({
-        r#"<!DOCTYPE html>
+        let y = PreEscaped({
+            r#"<!DOCTYPE html>
 <html>
 
 <body>
@@ -241,7 +245,8 @@ pub fn home2() -> String {
 </body>
 
 </html>"#
-    });
-    let z = x.into_string() + &y.into_string();
-    z
+        });
+        let z = x.into_string() + &y.into_string();
+        z
+    }
 }

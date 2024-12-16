@@ -1,7 +1,8 @@
-use super::{home, home2, htmx::htmx_test};
 use maud::html;
 use std::{collections::HashMap, fmt, path::PathBuf, sync::LazyLock};
 use tiny_http::Response;
+pub struct Home;
+pub struct Test;
 #[deny(unused)] //so that if it errors i know i need to put another in the from
 #[derive(Hash, Clone, Copy, PartialEq, Eq)]
 pub enum Page {
@@ -13,9 +14,9 @@ pub enum Page {
 impl Page {
     pub const HM: LazyLock<HashMap<Page, String>> = LazyLock::new(|| {
         HashMap::from([
-            (Page::Home, home()),
-            (Page::Home2, home2()),
-            (Page::HtmxTest, htmx_test()),
+            (Page::Home, Home::home()),
+            (Page::Home2, Home::home2()),
+            (Page::HtmxTest, Test::htmx_test()),
         ])
     });
     fn not_found() -> String {
@@ -24,9 +25,9 @@ impl Page {
     pub fn get(page_dir: PathBuf) -> Response<std::io::Cursor<Vec<u8>>> {
         match Self::HM
             .iter()
-            .find(|(&z, _)| Some(z.to_string()) == page_dir.into_string())
+            .find(|(&z, _)| Some(z.to_string()) == page_dir.try_into_string())
         {
-            Some((_,x)) => Response::from_data(x.clone()).with_status_code(200),
+            Some((_, x)) => Response::from_data(x.clone()).with_status_code(200),
             None => Response::from_data(Self::not_found()).with_status_code(404),
         }
     }
@@ -41,11 +42,11 @@ impl fmt::Display for Page {
     }
 }
 
-trait IntoString {
-    fn into_string(&self) -> Option<String>;
+trait TryIntoString {
+    fn try_into_string(&self) -> Option<String>;
 }
-impl IntoString for PathBuf {
-    fn into_string(&self) -> Option<String> {
+impl TryIntoString for PathBuf {
+    fn try_into_string(&self) -> Option<String> {
         Some(self.to_str()?.to_string())
     }
 }
