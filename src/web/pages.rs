@@ -2,7 +2,6 @@ use maud::html;
 use std::{collections::HashMap, path::PathBuf, sync::LazyLock};
 use tiny_http::Response;
 pub struct Webpages;
-#[deny(unused)] //so that if it errors i know i need to put another in the from
 macro_rules! enum_str {
     (enum $name:ident {
         $($variant:ident = $val:expr),*,
@@ -28,7 +27,7 @@ enum_str! {
         Home2 = 0x01,
         HtmxTest =0x02,
     }
-}  
+}
 
 impl Page {
     pub const HM: LazyLock<HashMap<Page, String>> = LazyLock::new(|| {
