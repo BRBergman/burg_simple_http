@@ -2,6 +2,7 @@ use std::net::{Ipv4Addr, SocketAddrV4};
 use tiny_http::Server;
 mod web;
 use web::web_server;
+mod en_test;
 //TODO: use htmx instead of js
 //maud
 //impl core::ops::Add <- thing

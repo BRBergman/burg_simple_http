@@ -2,10 +2,11 @@ use maud::{html, PreEscaped, DOCTYPE};
 
 use crate::web::web_addons::{icon, stylesheet, title};
 
-use super::pages::Home;
+use super::pages::Webpages;
 
-impl Home {
-    pub fn home() -> String {
+impl Webpages {
+    #[expect(non_snake_case)]
+    pub fn Home() -> String {
         let i = 0;
 
         html! {
@@ -26,9 +27,10 @@ impl Home {
         .into_string()
     }
 }
-impl Home {
+impl Webpages {
     //eventually rewrite with maud
-    pub fn home2() -> String {
+    #[expect(non_snake_case)]
+    pub fn Home2() -> String {
         let x = html! {
             (DOCTYPE)
             html{

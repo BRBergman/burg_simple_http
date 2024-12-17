@@ -2,9 +2,10 @@ use maud::html;
 
 use crate::web::web_addons::{script, stylesheet};
 
-use super::pages::Test;
-impl Test {
-    pub fn htmx_test() -> String {
+use super::pages::Webpages;
+impl Webpages {
+    #[expect(non_snake_case)]
+    pub fn HtmxTest() -> String {
         let res = html! {
         (script("https://unpkg.com/htmx.org@2.0.3"));
         (stylesheet("index.css"));

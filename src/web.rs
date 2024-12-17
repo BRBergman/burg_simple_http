@@ -1,4 +1,3 @@
-use home::*;
 use maud::html;
 use pages::Page;
 use std::io::Cursor;

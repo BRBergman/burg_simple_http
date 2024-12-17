@@ -1,22 +1,41 @@
 use maud::html;
-use std::{collections::HashMap, fmt, path::PathBuf, sync::LazyLock};
+use std::{collections::HashMap, path::PathBuf, sync::LazyLock};
 use tiny_http::Response;
-pub struct Home;
-pub struct Test;
+pub struct Webpages;
 #[deny(unused)] //so that if it errors i know i need to put another in the from
-#[derive(Hash, Clone, Copy, PartialEq, Eq)]
-pub enum Page {
-    Home,
-    Home2,
-    HtmxTest,
+macro_rules! enum_str {
+    (enum $name:ident {
+        $($variant:ident = $val:expr),*,
+    }) => {
+        #[derive(Hash, Clone, Copy, PartialEq, Eq, Debug)]
+        pub enum $name {
+            $($variant = $val),*
+        }
+
+        impl $name {
+            fn name(&self) -> &'static str {
+                match self {
+                    $($name::$variant => stringify!($variant)),*
+                }
+            }
+        }
+    };
 }
+
+enum_str! {
+    enum Page {
+        Home = 0x00,
+        Home2 = 0x01,
+        HtmxTest =0x02,
+    }
+}  
 
 impl Page {
     pub const HM: LazyLock<HashMap<Page, String>> = LazyLock::new(|| {
         HashMap::from([
-            (Page::Home, Home::home()),
-            (Page::Home2, Home::home2()),
-            (Page::HtmxTest, Test::htmx_test()),
+            (Page::Home, Webpages::Home()),
+            (Page::Home2, Webpages::Home2()),
+            (Page::HtmxTest, Webpages::HtmxTest()),
         ])
     });
     fn not_found() -> String {
@@ -25,19 +44,10 @@ impl Page {
     pub fn get(page_dir: PathBuf) -> Response<std::io::Cursor<Vec<u8>>> {
         match Self::HM
             .iter()
-            .find(|(&z, _)| Some(z.to_string()) == page_dir.try_into_string())
+            .find(|(&z, _)| Some(z.name().to_lowercase()) == page_dir.try_into_string())
         {
             Some((_, x)) => Response::from_data(x.clone()).with_status_code(200),
             None => Response::from_data(Self::not_found()).with_status_code(404),
-        }
-    }
-}
-impl fmt::Display for Page {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Page::Home => write!(f, "home"),
-            Page::Home2 => write!(f, "home2"),
-            Page::HtmxTest => write!(f, "htmx_test"),
         }
     }
 }
