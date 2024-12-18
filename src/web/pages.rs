@@ -1,8 +1,8 @@
 use maud::html;
-use std::{collections::HashMap, fmt::format, path::PathBuf, sync::LazyLock};
+use std::{collections::HashMap, path::PathBuf, sync::LazyLock};
 use tiny_http::Response;
 pub struct Webpages;
-macro_rules! enum_str {
+macro_rules! enum_page {
     (enum $name:ident {
         $($variant:ident = $val:expr),*,
     }) => {
@@ -26,7 +26,8 @@ macro_rules! enum_str {
         }
     };
 }
-enum_str! {
+//for each on of these we have to implement a webpages one
+enum_page! {
     enum Page {
         Home = 0x00,
         Home2 = 0x01,
@@ -35,7 +36,6 @@ enum_str! {
 }
 
 impl Page {
-    
     fn not_found() -> String {
         html! {h1{"Not Found"}}.into_string()
     }
