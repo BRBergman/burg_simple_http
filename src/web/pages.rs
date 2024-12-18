@@ -1,5 +1,5 @@
 use maud::html;
-use std::{collections::HashMap, path::PathBuf, sync::LazyLock};
+use std::{collections::HashMap, fmt::format, path::PathBuf, sync::LazyLock};
 use tiny_http::Response;
 pub struct Webpages;
 macro_rules! enum_str {
@@ -17,10 +17,15 @@ macro_rules! enum_str {
                     $($name::$variant => stringify!($variant)),*
                 }
             }
+            pub const HM: LazyLock<HashMap<Page, String>> = LazyLock::new(|| {
+                HashMap::from([
+                    //(Page::Home, Webpages::Home()),
+                    $(($name::$variant,Webpages::$variant()) ),*
+                ])
+            });
         }
     };
 }
-
 enum_str! {
     enum Page {
         Home = 0x00,
@@ -30,17 +35,11 @@ enum_str! {
 }
 
 impl Page {
-    pub const HM: LazyLock<HashMap<Page, String>> = LazyLock::new(|| {
-        HashMap::from([
-            (Page::Home, Webpages::Home()),
-            (Page::Home2, Webpages::Home2()),
-            (Page::HtmxTest, Webpages::HtmxTest()),
-        ])
-    });
+    
     fn not_found() -> String {
         html! {h1{"Not Found"}}.into_string()
     }
-    pub fn get(page_dir: PathBuf) -> Response<std::io::Cursor<Vec<u8>>> {
+    pub fn get(page_dir: &PathBuf) -> Response<std::io::Cursor<Vec<u8>>> {
         match Self::HM
             .iter()
             .find(|(&z, _)| Some(z.name().to_lowercase()) == page_dir.try_into_string())

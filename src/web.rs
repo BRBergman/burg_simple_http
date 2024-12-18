@@ -20,10 +20,10 @@ fn dir_not_found() -> Response<Cursor<Vec<u8>>> {
 }
 
 pub trait ToWebResponse {
-    fn to_web_response(self) -> Response<Cursor<Vec<u8>>>;
+    fn to_web_response(&self) -> Response<Cursor<Vec<u8>>>;
 }
 impl ToWebResponse for PathBuf {
-    fn to_web_response(self) -> Response<Cursor<Vec<u8>>> {
+    fn to_web_response(&self) -> Response<Cursor<Vec<u8>>> {
         let env = match std::env::current_dir() {
             Ok(x) => x,
             Err(err) => {
