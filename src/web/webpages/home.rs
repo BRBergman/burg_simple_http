@@ -3,7 +3,9 @@ use rand::Rng;
 
 use crate::web::web_addons::{icon, script, stylesheet, title};
 
-use super::pages::Webpages;
+use super::Webpages;
+
+
 
 impl Webpages {
     #[expect(non_snake_case)]
@@ -54,7 +56,7 @@ impl Webpages {
         let laptopSpecs =
             "Dell Inspiron 3537 running Arch Linux with the KDE Plasma Window Manager";
 
-       html! {
+        html! {
                 (DOCTYPE)
                 html{
                 head{

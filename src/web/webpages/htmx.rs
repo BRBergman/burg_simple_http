@@ -2,7 +2,7 @@ use maud::html;
 
 use crate::web::web_addons::{script, stylesheet};
 
-use super::pages::Webpages;
+use super::Webpages;
 impl Webpages {
     #[expect(non_snake_case)]
     pub fn HtmxTest() -> String {

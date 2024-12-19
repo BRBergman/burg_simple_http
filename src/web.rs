@@ -4,8 +4,8 @@ use std::io::Cursor;
 use std::path::PathBuf;
 use std::thread::spawn;
 use tiny_http::{Response, Server};
-pub mod home;
-pub mod htmx;
+
+pub mod webpages;
 pub mod pages;
 pub mod web_addons;
 

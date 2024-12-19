@@ -1,7 +1,9 @@
 use maud::html;
 use std::{collections::HashMap, path::PathBuf, sync::LazyLock};
 use tiny_http::Response;
-pub struct Webpages;
+
+use super::webpages::Webpages;
+
 macro_rules! enum_page {
     (enum $name:ident {
         $($variant:ident = $val:expr),*,
@@ -29,9 +31,10 @@ macro_rules! enum_page {
 //for each on of these we have to implement a webpages one
 enum_page! {
     enum Page {
-        Home = 0x00,
-        Index = 0x01,
-        HtmxTest =0x02,
+        Home = 0,
+        Index = 1,
+        HtmxTest = 2,
+        Blog = 3,
     }
 }
 
