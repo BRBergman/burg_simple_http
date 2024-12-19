@@ -30,7 +30,7 @@ macro_rules! enum_page {
 enum_page! {
     enum Page {
         Home = 0x00,
-        Home2 = 0x01,
+        Index = 0x01,
         HtmxTest =0x02,
     }
 }
@@ -40,10 +40,10 @@ impl Page {
         html! {h1{"Not Found"}}.into_string()
     }
     pub fn get(page_dir: &PathBuf) -> Response<std::io::Cursor<Vec<u8>>> {
-        match Self::HM
-            .iter()
-            .find(|(&z, _)| Some(z.name().to_lowercase()) == page_dir.try_into_string())
-        {
+        match Self::HM.iter().find(|(&z, _)| {
+            (Some(z.name().to_lowercase()) == page_dir.try_into_string())
+                || (page_dir == &PathBuf::new() && z == Page::Index)
+        }) {
             Some((_, x)) => Response::from_data(x.clone()).with_status_code(200),
             None => Response::from_data(Self::not_found()).with_status_code(404),
         }
