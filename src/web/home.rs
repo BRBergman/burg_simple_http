@@ -54,7 +54,7 @@ impl Webpages {
         let laptopSpecs =
             "Dell Inspiron 3537 running Arch Linux with the KDE Plasma Window Manager";
 
-        let x = html! {
+       html! {
                 (DOCTYPE)
                 html{
                 head{
@@ -188,8 +188,6 @@ impl Webpages {
                     <script src="https://webneko.net/n20171213.js"></script><a href="https://webneko.net">Neko</a>
                 </h1>"#))}
             }
-        };
-
-        x.into_string()
+        }.into_string()
     }
 }
