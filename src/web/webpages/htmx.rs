@@ -1,6 +1,6 @@
 use maud::html;
 
-use crate::web::web_addons::{script, stylesheet};
+use crate::web::webpages::{script, stylesheet};
 
 use super::Webpages;
 impl Webpages {

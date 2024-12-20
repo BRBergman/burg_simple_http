@@ -1,11 +1,9 @@
 use maud::{html, PreEscaped, DOCTYPE};
 use rand::Rng;
 
-use crate::web::web_addons::{icon, script, stylesheet, title};
+use crate::web::webpages::{icon, script, stylesheet, title};
 
 use super::Webpages;
-
-
 
 impl Webpages {
     #[expect(non_snake_case)]
