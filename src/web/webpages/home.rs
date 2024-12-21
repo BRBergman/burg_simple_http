@@ -1,7 +1,10 @@
 use maud::{html, PreEscaped, DOCTYPE};
 use rand::Rng;
 
-use crate::web::webpages::{icon, script, stylesheet, title};
+use crate::web::webpages::{
+    blog::{blogvec, ToPreEscaped},
+    icon, script, stylesheet, title,
+};
 
 use super::Webpages;
 
@@ -128,19 +131,22 @@ impl Webpages {
                                 }
                             }
                             div class="innerboxes"{
-                                h3 {"Projects"};
+                                h3 {"Projects:"};
                                 p{
                                     "rewriting the website in rust"
                                 }
                             }
                             div class="inbetween" {br;}
+                            (match blogvec().into_iter().last() {
+                                Some(x) => {x.to_pre_escaped()},
+                                None => {PreEscaped(String::new())},
+                            })
                             div class="innerboxes"{
                                 h3{"QOTR (quote of the refresh):"}
                                 p{(Self::quote_of_the_refresh())}
                             }
-
                         }
-                        div class="outerboxes" style="width: 25%"{
+                        div class="outerboxes" style="width: 25%"{//second half
                             div class="innerboxes"{
                                 h3{"Links:"}
                                 p {a href="https://twitter.com/_burgburg_" target="_blank" {"Twitter"}};

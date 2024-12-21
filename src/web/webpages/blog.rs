@@ -1,23 +1,24 @@
-use std::fmt::Display;
-
 use maud::{html, PreEscaped, DOCTYPE};
+use std::fmt::Display;
 
 use crate::web::webpages::{icon, stylesheet, title};
 
 use super::Webpages;
-
+pub fn blogvec() -> Vec<Blog> {
+    vec![
+        //add on to end
+        Blog::new(Date::from((10, 4, 2024)), " why is everything so weawerewasrw "),
+        Blog::new(Date::from((10, 5, 2024)), " i can only do so much reading before the words start to mesh together, maybe i need glasses "),
+        Blog::new(Date::from((10, 29, 2024)), "*hacker voice* im in </br>(accepted to a collage) "),
+        Blog::new(Date::from((10, 31, 2024)), " halloween happened too fast i didn't have time to get a costume :( "),
+        Blog::new(Date::from((12, 20, 2024)), "write it in rust"),
+        Blog::new(Date::from((12, 20, 2024)), "i ended up getting glasses"),
+    ]
+}
 impl Webpages {
     #[expect(non_snake_case)]
     pub fn Blog() -> String {
-        let pages = vec![
-            //add on to end
-            Blog::new(Date::from((10, 4, 2024)), " why is everything so weawerewasrw "),
-            Blog::new(Date::from((10, 5, 2024)), " i can only do so much reading before the words start to mesh together, maybe i need glasses "),
-            Blog::new(Date::from((10, 29, 2024)), "*hacker voice* im in </br>(accepted to a collage) "),
-            Blog::new(Date::from((10, 31, 2024)), " halloween happened too fast i didn't have time to get a costume :( "),
-            Blog::new(Date::from((12, 20, 2024)), "write it in rust"),
-            Blog::new(Date::from((12, 20, 2024)), "i ended up getting glasses"),
-        ];
+        let pages = blogvec();
         html! {
             (DOCTYPE)
             html{
@@ -39,7 +40,8 @@ impl Webpages {
         .into_string()
     }
 }
-struct Blog {
+#[derive(Clone)]
+pub struct Blog {
     date: Date,
     content: String,
 }
@@ -89,7 +91,7 @@ impl Display for Date {
     }
 }
 
-trait ToPreEscaped {
+pub trait ToPreEscaped {
     fn to_pre_escaped(self) -> PreEscaped<String>;
 }
 impl ToPreEscaped for Vec<Blog> {
@@ -100,5 +102,10 @@ impl ToPreEscaped for Vec<Blog> {
             .collect::<Vec<String>>();
         x.reverse();
         PreEscaped(x.concat())
+    }
+}
+impl ToPreEscaped for Blog {
+    fn to_pre_escaped(self) -> PreEscaped<String> {
+        PreEscaped(format!("<div  class=\"innerboxes\"> <h3>Latest Blog: {}</h3> \n <p> {}</p>\n</div> \n <div class=\"inbetweenboxes\"> </br></div>", self.date, self.content))
     }
 }
