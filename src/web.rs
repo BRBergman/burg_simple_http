@@ -35,7 +35,7 @@ impl ToWebResponse for PathBuf {
         }
         .join("website");
         match std::fs::read(env.join(&self)) {
-            Err(_) => match std::fs::read(env.join(&self).join("index.html")) {
+            Err(_) => match std::fs::read(env.join(&self).join("in dex.html")) {
                 Err(_) => Some(Page::get(self)),
                 Ok(x) => Some(Response::from_data(x).with_status_code(200)),
             },

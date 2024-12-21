@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use maud::{html, PreEscaped, DOCTYPE};
 
-use crate::web::webpages::stylesheet;
+use crate::web::webpages::{icon, stylesheet, title};
 
 use super::Webpages;
 
@@ -10,21 +10,28 @@ impl Webpages {
     #[expect(non_snake_case)]
     pub fn Blog() -> String {
         let pages = vec![
+            //add on to end
             Blog::new(Date::from((12, 20, 2024)), "write it in rust"),
             Blog::new(Date::from((12, 20, 2024)), "i need two things"),
         ];
         html! {
-        (DOCTYPE)
-        html{
-            head{
-                (stylesheet("/index.css"))
-            }
-            body{
-                div class="outerboxes" style="padding-top: 30px"{
+            (DOCTYPE)
+            html{
+                head{
+                    (title("the burgblog"))
+                        (stylesheet("index.css"))
+                        (icon("favicon.png"))
                 }
-                (pages.to_pre_escaped())
+                body{
+                    h1 class="heading" {("The Burgblog")};
+                    div class="main"{
+                        div class="outerboxes" {
+                            (pages.to_pre_escaped())
+                        }
+                    }
+                }
             }
-        }}
+        }
         .into_string()
     }
 }
@@ -64,7 +71,7 @@ impl ToPreEscaped for Vec<Blog> {
     fn to_pre_escaped(self) -> PreEscaped<String> {
         let mut x = self
             .iter()
-            .map(|x| format!("<div style=\"margin-left: 100px; margin-right: 100px;\" class=\"innerboxes\"> <h1>{}</h1> \n <p> {}</p>\n</div> \n <div class=\"inbetweenboxes\"> </br></div>", x.date, x.content))
+            .map(|x| format!("<div  class=\"innerboxes\"> <h1>{}</h1> \n <p> {}</p>\n</div> \n <div class=\"inbetweenboxes\"> </br></div>", x.date, x.content))
             .collect::<Vec<String>>();
         x.reverse();
         PreEscaped(x.concat())
