@@ -58,6 +58,6 @@ trait TryIntoString {
 }
 impl TryIntoString for PathBuf {
     fn try_into_string(&self) -> Option<String> {
-        Some(self.to_str()?.to_string())
+        Some(self.to_str()?.trim_end_matches('/').to_string())
     }
 }
