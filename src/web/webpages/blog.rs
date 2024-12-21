@@ -11,19 +11,23 @@ impl Webpages {
     pub fn Blog() -> String {
         let pages = vec![
             //add on to end
+            Blog::new(Date::from((10, 4, 2024)), " why is everything so weawerewasrw "),
+            Blog::new(Date::from((10, 5, 2024)), " i can only do so much reading before the words start to mesh together, maybe i need glasses "),
+            Blog::new(Date::from((10, 29, 2024)), "*hacker voice* im in </br>(accepted to a collage) "),
+            Blog::new(Date::from((10, 31, 2024)), " halloween happened too fast i didn't have time to get a costume :( "),
             Blog::new(Date::from((12, 20, 2024)), "write it in rust"),
-            Blog::new(Date::from((12, 20, 2024)), "i need two things"),
+            Blog::new(Date::from((12, 20, 2024)), "i ended up getting glasses"),
         ];
         html! {
             (DOCTYPE)
             html{
                 head{
                     (title("the burgblog"))
-                        (stylesheet("index.css"))
+                        (stylesheet("/index.css"))
                         (icon("favicon.png"))
                 }
                 body{
-                    h1 class="heading" {("The Burgblog")};
+                    h1 class="heading" {("the burgblog")};
                     div class="main"{
                         div class="outerboxes" {
                             (pages.to_pre_escaped())
