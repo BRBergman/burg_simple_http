@@ -23,8 +23,8 @@ impl Webpages {
             html{
                 head{
                     (title("the burgblog"))
-                        (stylesheet("/index.css"))
-                        (icon("favicon.png"))
+                    (stylesheet("/index.css"))
+                    (icon("favicon.png"))
                 }
                 body{
                     h1 class="heading" {("the burgblog")};
@@ -51,6 +51,13 @@ impl Blog {
         }
     }
 }
+/// mm/dd/yyyy
+/// 12/25/1999
+/// December 25th 1999
+/// ```
+/// let date = Date::from((12/25/1999));
+/// ```
+
 #[derive(Clone, Copy)]
 struct Date {
     pub month: u8,
@@ -64,7 +71,21 @@ impl From<(u8, u8, u16)> for Date {
 }
 impl Display for Date {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}/{}/{}", self.month, self.day, self.year)
+        write!(
+            f,
+            "{}/{}/{}",
+            if self.month >= 10 {
+                self.month.to_string()
+            } else {
+                format!("0{}", self.month)
+            },
+            if self.day >= 10 {
+                self.day.to_string()
+            } else {
+                format!("0{}", self.day)
+            },
+            self.year
+        )
     }
 }
 
