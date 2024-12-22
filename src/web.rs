@@ -19,42 +19,37 @@ fn dir_not_found() -> Response<Cursor<Vec<u8>>> {
 }
 
 pub trait ToWebResponse {
-    fn to_web_response(&self) -> Option<Response<Cursor<Vec<u8>>>>;
+    fn to_web_response(&self) -> Response<Cursor<Vec<u8>>>;
 }
 impl ToWebResponse for PathBuf {
-    fn to_web_response(&self) -> Option<Response<Cursor<Vec<u8>>>> {
-        if self == &PathBuf::from("exit") {
-            return None;
-        };
+    fn to_web_response(&self) -> Response<Cursor<Vec<u8>>> {
         let env = match std::env::current_dir() {
             Ok(x) => x,
             Err(err) => {
                 println!("finding local directory error: {}", err);
-                return Some(dir_not_found());
+                return dir_not_found();
             }
         }
         .join("website");
-        match std::fs::read(env.join(&self)) {
-            Err(_) => match std::fs::read(env.join(&self).join("in dex.html")) {
-                Err(_) => Some(Page::get(self)),
-                Ok(x) => Some(Response::from_data(x).with_status_code(200)),
+        let pth = &env.join(&self);
+        match Page::get(self) {
+            Some(x) => x,
+            None => match std::fs::read(pth) {
+                Ok(x) => Response::from_data(x),
+                Err(_) => match std::fs::read(pth.join("index.html")) {
+                    Ok(x) => Response::from_data(x),
+                    Err(_) => Response::from_data(html! {h1{"Not Found"}}.into_string()),
+                },
             },
-            Ok(x) => Some(Response::from_data(x).with_status_code(200)),
         }
     }
 }
 pub fn web_server(server: Server) -> Option<()> {
     let mut spawns = Vec::new();
     for x in server.incoming_requests().into_iter() {
-        let url = PathBuf::from(x.url().trim_start_matches('/'));
+        let url = PathBuf::from(x.url().trim_matches('/'));
         println!("Url: {}", url.display());
-        let real_url = match url.to_web_response() {
-            Some(y) => y,
-            None => {
-                break;
-            }
-        };
-        spawns.push(spawn(move || x.respond(real_url).unwrap()));
+        spawns.push(spawn(move || x.respond(url.to_web_response()).unwrap()));
     }
     for spawn in spawns {
         let _ = spawn.join();

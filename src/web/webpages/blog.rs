@@ -29,6 +29,7 @@ impl Webpages {
                 }
                 body{
                     h1 class="heading" {("the burgblog")};
+                    p {a href="/" {"Back"}};
                     div class="main"{
                         div class="outerboxes" {
                             (pages.to_pre_escaped())

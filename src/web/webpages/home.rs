@@ -12,7 +12,6 @@ impl Webpages {
     #[expect(non_snake_case)]
     pub fn Home() -> String {
         let i = 0;
-
         html! {
                 (DOCTYPE)
                 html{
@@ -164,8 +163,8 @@ impl Webpages {
                             div class="inbetween" {br;}
                             div class="innerboxes"{
                                 h3{"Pages:"}
-                                p {a href="/blog" target="_blank" {"The Burgblog"}};
-                                p {a href="/BlahajGallery" target="_blank" {"The Blahaj Gallery"}};
+                                p {a href="/blog" {"The Burgblog"}};
+                                p {a href="/BlahajGallery" {"The Blahaj Gallery"}};
                             }
                             div class="inbetween" {br;}
                             div class="innerboxes"{
