@@ -100,29 +100,23 @@ impl Webpages {
                                     "My laptop is "{(laptopSpecs)}
                                 };
                                 h3 {"My Favorite Shows:"};
-                                p{
-                                    "Girls Band Cry, " br;
-                                    "Lucky Star, " br;
-                                    "Bocchi The Rock," br;
-                                    "Serial Expiriments Lain," br;
-                                    "Better Call " a style="color: red;" onclick="SaulGoodmanBwawhAudio();"  { i {"Saul"}} "," br;
-                                    "Madoka Magica"
-                                }
-                                //make this automated with iters maybe
+                                {(vec!["Girls Band Cry",
+                                "Lucky Star",
+                                "Bocchi The Rock",
+                                "Serial Expiriments Lain",
+                                "Better Call <a style=\"color: red;\" onclick=\"SaulGoodmanBwawhAudio();\"><i>Saul</i></a>",
+                                "Madoka Magica"].as_list())}
                                 h3 {"My Favorite Games:"};
-                                p{
-                                    "Vicky 3, " br;
-                                    "Escape from Tarkov, " br;
-                                    "VRChat," br;
-                                    "SMT/Persona," br;
-                                    "Hoi4" br;
-                                    "Terraria, " br;
-                                    "Half-Life, " br;
-                                    "Arma Reforger, " br;
-                                    "PSO2:NGS, " br;
-                                    "Team Fortress 2"
-                                }
-
+                                {(vec!["Vicky 3",
+                                "Escape from Tarkov",
+                                "VRChat",
+                                "SMT/Persona",
+                                "Hoi4",
+                                "Terraria",
+                                "Half-Life",
+                                "Arma Reforger",
+                                "PSO2:NGS",
+                                "Team Fortress 2"].as_list())}
                             }
                             div class="inbetween"{
                                 marquee behavior="scroll" direction="left"{
@@ -136,10 +130,10 @@ impl Webpages {
                                 }
                             }
                             div class="inbetween" {br;}
-                            (match blogvec().into_iter().last() {
-                                Some(x) => {x.to_pre_escaped()},
-                                None => {PreEscaped(String::new())},
-                            })
+                            @match blogvec().into_iter().last() {
+                                Some(x) => {(x.as_inner_boxes())},
+                                None => {(PreEscaped(String::new()))},
+                            }
                             div class="innerboxes"{
                                 h3{"QOTR (quote of the refresh):"}
                                 p{(Self::quote_of_the_refresh())}
@@ -194,5 +188,19 @@ impl Webpages {
                 </h1>"#))}
             }
         }.into_string()
+    }
+}
+trait AsList {
+    fn as_list(self) -> PreEscaped<String>;
+}
+impl<T: ToString> AsList for Vec<T> {
+    fn as_list(self) -> PreEscaped<String> {
+        let mut x = self
+            .iter()
+            .map(|x| format!("{}, </br>", x.to_string()))
+            .collect::<Vec<String>>();
+        *x.first_mut().unwrap() = format!("<p> {}, <br>", self.first().unwrap().to_string());
+        *x.last_mut().unwrap() = format!("{}</p>", self.last().unwrap().to_string());
+        PreEscaped(x.concat())
     }
 }

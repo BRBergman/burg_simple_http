@@ -32,7 +32,7 @@ impl Webpages {
                     p {a href="/" {"Back"}};
                     div class="main"{
                         div class="outerboxes" {
-                            (pages.to_pre_escaped())
+                            (pages.as_inner_boxes())
                         }
                     }
                 }
@@ -93,10 +93,10 @@ impl Display for Date {
 }
 
 pub trait ToPreEscaped {
-    fn to_pre_escaped(self) -> PreEscaped<String>;
+    fn as_inner_boxes(&self) -> PreEscaped<String>;
 }
 impl ToPreEscaped for Vec<Blog> {
-    fn to_pre_escaped(self) -> PreEscaped<String> {
+    fn as_inner_boxes(&self) -> PreEscaped<String> {
         let mut x = self
             .iter()
             .map(|x| format!("<div  class=\"innerboxes\"> <h1>{}</h1> \n <p> {}</p>\n</div> \n <div class=\"inbetweenboxes\"> </br></div>", x.date, x.content))
@@ -106,7 +106,7 @@ impl ToPreEscaped for Vec<Blog> {
     }
 }
 impl ToPreEscaped for Blog {
-    fn to_pre_escaped(self) -> PreEscaped<String> {
+    fn as_inner_boxes(&self) -> PreEscaped<String> {
         PreEscaped(format!("<div  class=\"innerboxes\"> <h3>Latest Blog: {}</h3> \n <p> {}</p>\n</div> \n <div class=\"inbetweenboxes\"> </br></div>", self.date, self.content))
     }
 }
