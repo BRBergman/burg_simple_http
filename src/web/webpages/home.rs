@@ -71,17 +71,14 @@ impl Webpages {
                         div class="outerboxes"{
                             div class="innerboxes"{
                                 h1 {"Burg's Room"};
-                                img src="/indexassets/wor_webszsite.png" style="width: 21%; float: left; border: 3px solid #44415a; background-color: #e0b8bb; margin-right: 6px; margin-left: 19px;";
+                                img src="/indexassets/teto_1.png" style="width: 21%; float: left; border: 3px solid #44415a; background-color: #e0b8bb; margin-right: 6px; margin-left: 19px;";
                                 p style="align-items: center; display: inline"{
                                     br;"Welcome to my room! my personal website & blog to hold my web experiences and other fun things."
                                     br;"I love to drink Coffee with Boba, and many different Hot Teas (my fav is English Breakfast)."
                                     br;"Oatmeal is the best breakfast for when i eat breakfast."
                                     br;"Forever eepy.";
-                                    br;
-                                    br;
-                                    br;
                                 }
-                                h3 {"A Little About Me:"};
+                                h3 style="clear: left"{"A Little About Me:"};
                                 p {
                                     "Im a Dutch-American from the Northeast 🇺🇸."
                                     br; "Im learning Dutch 🇳🇱."
@@ -134,6 +131,7 @@ impl Webpages {
                                 Some(x) => {(x.as_inner_boxes())},
                                 None => {(PreEscaped(String::new()))},
                             }
+                            div class="inbetween" {br;}
                             div class="innerboxes"{
                                 h3{"QOTR (quote of the refresh):"}
                                 p{(Self::quote_of_the_refresh())}

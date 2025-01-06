@@ -1,6 +1,6 @@
 use maud::html;
 use pages::Page;
-use std::io::Cursor;
+use std::{io::Cursor, thread};
 use std::path::PathBuf;
 use std::thread::spawn;
 use tiny_http::{Response, Server};
@@ -44,14 +44,20 @@ impl ToWebResponse for PathBuf {
         }
     }
 }
-pub fn web_server(server: Server) -> Option<()> {
+pub fn web_server(server: &Server) -> Option<()> {
     let mut spawns = Vec::new();
     for x in server.incoming_requests().into_iter() {
         let url = PathBuf::from(x.url().trim_matches('/'));
         println!("Url: {}", url.display());
-        spawns.push(spawn(move || x.respond(url.to_web_response()).unwrap()));
+        if x.url().trim_matches('/') == "end"{
+            server.unblock()
+        }
+        else{
+            spawns.push(spawn(move || x.respond(url.to_web_response()).unwrap()));
+        }
     }
     for spawn in spawns {
+        println!("joining: {:?}",spawn.thread().id());
         let _ = spawn.join();
     }
     Some(())

@@ -13,6 +13,7 @@ pub fn blogvec() -> Vec<Blog> {
         Blog::new(Date::from((10, 31, 2024)), " halloween happened too fast i didn't have time to get a costume :( "),
         Blog::new(Date::from((12, 20, 2024)), "write it in rust"),
         Blog::new(Date::from((12, 20, 2024)), "i ended up getting glasses"),
+        Blog::new(Date::from((1, 6, 2025)), "bangs are peak"),
     ]
 }
 impl Webpages {
@@ -107,6 +108,9 @@ impl ToPreEscaped for Vec<Blog> {
 }
 impl ToPreEscaped for Blog {
     fn as_inner_boxes(&self) -> PreEscaped<String> {
-        PreEscaped(format!("<div  class=\"innerboxes\"> <h3>Latest Blog: {}</h3> \n <p> {}</p>\n</div> \n <div class=\"inbetweenboxes\"> </br></div>", self.date, self.content))
+        PreEscaped(format!(
+            "<div  class=\"innerboxes\"> <h3>Latest Blog: {}</h3> \n <p> {}</p>\n</div> ",
+            self.date, self.content
+        ))
     }
 }
