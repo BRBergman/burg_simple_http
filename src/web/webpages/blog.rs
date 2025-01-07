@@ -14,6 +14,7 @@ pub fn blogvec() -> Vec<Blog> {
         Blog::new(Date::from((12, 20, 2024)), "write it in rust"),
         Blog::new(Date::from((12, 20, 2024)), "i ended up getting glasses"),
         Blog::new(Date::from((1, 6, 2025)), "bangs are peak"),
+        Blog::new(Date::from((1, 6, 2025)), "take this shitass"),
     ]
 }
 impl Webpages {
