@@ -1,6 +1,6 @@
 use maud::html;
 use pages::Page;
-use std::{io::Cursor, thread};
+use std::io::Cursor;
 use std::path::PathBuf;
 use std::thread::spawn;
 use tiny_http::{Response, Server};
@@ -23,24 +23,26 @@ pub trait ToWebResponse {
 }
 impl ToWebResponse for PathBuf {
     fn to_web_response(&self) -> Response<Cursor<Vec<u8>>> {
-        let env = match std::env::current_dir() {
-            Ok(x) => x,
-            Err(err) => {
-                println!("finding local directory error: {}", err);
-                return dir_not_found();
-            }
-        }
-        .join("website");
-        let pth = &env.join(&self);
         match Page::get(self) {
             Some(x) => x,
-            None => match std::fs::read(pth) {
-                Ok(x) => Response::from_data(x),
-                Err(_) => match std::fs::read(pth.join("index.html")) {
+            None => {
+                let env = match std::env::current_dir() {
+                    Ok(x) => x,
+                    Err(err) => {
+                        println!("finding local directory error: {}", err);
+                        return dir_not_found();
+                    }
+                }
+                .join("website");
+                let pth = &env.join(&self);
+                match std::fs::read(pth) {
                     Ok(x) => Response::from_data(x),
-                    Err(_) => Response::from_data(html! {h1{"Not Found"}}.into_string()),
-                },
-            },
+                    Err(_) => match std::fs::read(pth.join("index.html")) {
+                        Ok(x) => Response::from_data(x),
+                        Err(_) => Response::from_data(html! {h1{"Not Found"}}.into_string()),
+                    },
+                }
+            }
         }
     }
 }
@@ -49,15 +51,14 @@ pub fn web_server(server: &Server) -> Option<()> {
     for x in server.incoming_requests().into_iter() {
         let url = PathBuf::from(x.url().trim_matches('/'));
         println!("Url: {}", url.display());
-        if x.url().trim_matches('/') == "end"{
+        if x.url().trim_matches('/') == "end" {
             server.unblock()
-        }
-        else{
+        } else {
             spawns.push(spawn(move || x.respond(url.to_web_response()).unwrap()));
         }
     }
     for spawn in spawns {
-        println!("joining: {:?}",spawn.thread().id());
+        println!("Joining: {:?}", spawn.thread().id());
         let _ = spawn.join();
     }
     Some(())
