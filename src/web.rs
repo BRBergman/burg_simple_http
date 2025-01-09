@@ -46,20 +46,19 @@ impl ToWebResponse for PathBuf {
         }
     }
 }
-pub fn web_server(server: &Server) -> Option<()> {
+pub fn web_server(server: &Server) {
     let mut spawns = Vec::new();
     for x in server.incoming_requests().into_iter() {
-        let url = PathBuf::from(x.url().trim_matches('/'));
-        println!("Url: {}", url.display());
-        if x.url().trim_matches('/') == "end" {
+        let url = x.url().trim_matches('/').to_owned();
+        println!("Url: {}", url);
+        if url == "end" {
             server.unblock()
         } else {
-            spawns.push(spawn(move || x.respond(url.to_web_response()).unwrap()));
+            spawns.push(spawn(move || x.respond(PathBuf::from(url).to_web_response()).unwrap()))
         }
     }
     for spawn in spawns {
         println!("Joining: {:?}", spawn.thread().id());
-        let _ = spawn.join();
+        let _ = spawn.join().unwrap();
     }
-    Some(())
 }
