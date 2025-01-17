@@ -49,12 +49,14 @@ impl ToWebResponse for PathBuf {
 pub fn web_server(server: &Server) {
     let mut spawns = Vec::new();
     for x in server.incoming_requests().into_iter() {
-        let url = x.url().trim_matches('/').to_owned();
-        println!("Url: {}", url);
-        if url == "end" {
+        let url = PathBuf::from(x.url().trim_matches('/'));
+        println!("Url: {}", url.display());
+        if url == PathBuf::from("end") {
             server.unblock()
         } else {
-            spawns.push(spawn(move || x.respond(PathBuf::from(url).to_web_response()).unwrap()))
+            spawns.push(spawn(move || {
+                x.respond(url.to_web_response()).unwrap()
+            }))
         }
     }
     for spawn in spawns {
