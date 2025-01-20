@@ -2,7 +2,7 @@ use maud::{html, PreEscaped, DOCTYPE};
 use rand::Rng;
 
 use crate::web::webpages::{
-    blog::{blogvec, ToPreEscaped},
+    blog::{blogvec, ToMarkup},
     icon, script, stylesheet, title,
 };
 

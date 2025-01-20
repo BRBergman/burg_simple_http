@@ -1,4 +1,4 @@
-use maud::{html, PreEscaped, DOCTYPE};
+use maud::{html, Markup, PreEscaped, DOCTYPE};
 use std::fmt::Display;
 
 use crate::web::webpages::{icon, stylesheet, title};
@@ -120,11 +120,11 @@ impl Display for Date {
     }
 }
 
-pub trait ToPreEscaped {
-    fn as_inner_boxes(&self) -> PreEscaped<String>;
+pub trait ToMarkup {
+    fn as_inner_boxes(&self) -> Markup;
 }
-impl ToPreEscaped for Vec<Blog> {
-    fn as_inner_boxes(&self) -> PreEscaped<String> {
+impl ToMarkup for Vec<Blog> {
+    fn as_inner_boxes(&self) -> Markup {
         let mut x = self
             .iter()
             .map(|x| format!("<div  class=\"innerboxes\"> <h1>{}</h1> \n <p> {}</p>\n</div> \n <div class=\"inbetweenboxes\"> </br></div>", x.date, x.content))
@@ -133,8 +133,8 @@ impl ToPreEscaped for Vec<Blog> {
         PreEscaped(x.concat())
     }
 }
-impl ToPreEscaped for Blog {
-    fn as_inner_boxes(&self) -> PreEscaped<String> {
+impl ToMarkup for Blog {
+    fn as_inner_boxes(&self) -> Markup {
         PreEscaped(format!(
             "<div  class=\"innerboxes\"> <h3>Latest Blog: {}</h3> \n <p> {}</p>\n</div> ",
             self.date, self.content
