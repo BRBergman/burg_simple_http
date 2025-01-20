@@ -6,7 +6,9 @@ use web::web_server;
 //maud
 //impl core::ops::Add <- thing
 fn main() {
+    let port = 8000;
     println!("Running");
-    let server = Server::http(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, 8000)).unwrap();
+    let server = Server::http(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, port))
+        .expect("failed to make server");
     web_server(&server);
 }

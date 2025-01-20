@@ -7,7 +7,7 @@ macro_rules! enum_page {
     (enum $name:ident {
         $($variant:ident = $val:expr),*,
     }) => {
-        #[allow(non_camel_case_types)]
+        #[expect(non_camel_case_types)]
         #[derive(Hash, Clone, Copy, PartialEq, Eq, Debug)]
         pub enum $name {
             $($variant = $val),*
@@ -48,17 +48,14 @@ enum_page! {
 }
 
 impl Page {
-    pub fn get(
-        page_dir: &PathBuf,
-        data: Option<String>,
-    ) -> Option<Response<std::io::Cursor<Vec<u8>>>> {
-        if let Some(x) = page_dir.try_into_string() {
-            let x = Page::select(&x, data);
-            if let Some(y) = x {
-                return Some(Response::from_data(y.clone()).with_status_code(200));
-            }
+    pub fn get(page_dir: &PathBuf) -> Option<Response<std::io::Cursor<Vec<u8>>>> {
+        match Self::HM.iter().find(|(&z, _)| {
+            (Some(z.name().to_lowercase()) == page_dir.try_into_string())
+                || (page_dir == &PathBuf::new() && z == Page::index)
+        }) {
+            Some((_, x)) => Some(Response::from_data(x.clone()).with_status_code(200)),
+            None => None,
         }
-        None
     }
 }
 

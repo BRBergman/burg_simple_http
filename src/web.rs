@@ -1,6 +1,7 @@
 use maud::html;
 use pages::Page;
 use std::io::Cursor;
+use std::io::Cursor;
 use std::path::PathBuf;
 use std::thread::spawn;
 use tiny_http::{Response, Server};
@@ -44,7 +45,7 @@ impl ToWebResponse for DestructedURL {
         }
     }
 }
-pub fn web_server(server: &Server) -> Option<()> {
+pub fn web_server(server: &Server) {
     let mut spawns = Vec::new();
     for x in server.incoming_requests().into_iter() {
         let url = DestructedURL::new(x.url());
@@ -59,7 +60,42 @@ pub fn web_server(server: &Server) -> Option<()> {
         println!("joining: {:?}", spawn.thread().id());
         let _ = spawn.join();
     }
-    Some(())
+}
+#[derive(Debug, Clone)]
+struct DestructedURL {
+    pub path: PathBuf,
+    pub extra_data: Option<String>,
+}
+impl DestructedURL {
+    fn new<T: ToString>(path: T) -> Self {
+        let binding = path.to_string();
+        let twos = binding
+            .trim_matches('/')
+            .splitn(2, '?')
+            .map(|x| x)
+            .collect::<Vec<&str>>();
+        let url = PathBuf::from(twos[0]);
+        let data = if twos.len() > 1 {
+            println!("{}", twos[1]);
+            Some(twos[1].to_owned())
+        } else {
+            None
+        };
+        Self {
+            path: url,
+            extra_data: data,
+        }
+    }
+}
+impl std::fmt::Display for DestructedURL {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{} ? {}",
+            self.path.display(),
+            self.extra_data.clone().unwrap_or_default()
+        )
+    }
 }
 #[derive(Debug, Clone)]
 struct DestructedURL {
