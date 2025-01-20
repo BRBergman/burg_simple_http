@@ -1,12 +1,13 @@
-use std::{collections::HashMap, path::PathBuf, sync::LazyLock};
+use std::path::PathBuf;
 use tiny_http::Response;
 
-use super::webpages::Webpages;
+use super::{webpages::Webpages, DestructedURL};
 
 macro_rules! enum_page {
     (enum $name:ident {
         $($variant:ident = $val:expr),*,
     }) => {
+        #[allow(unused)]
         #[expect(non_camel_case_types)]
         #[derive(Hash, Clone, Copy, PartialEq, Eq, Debug)]
         pub enum $name {
@@ -20,13 +21,6 @@ macro_rules! enum_page {
                     $($name::$variant => stringify!($variant)),*
                 }
             }
-            #[allow(unused)]
-            pub const HM: LazyLock<HashMap<Page, String>> = LazyLock::new(|| {
-                HashMap::from([
-                    //(Page::Home, Webpages::Home()),
-                    $(($name::$variant,Webpages::$variant(None)) ),*
-                ])
-            });
             fn select(input:&str,data: Option<String>) -> Option<String> {
                 match input {
                     $(stringify!($variant) => Some(Webpages::$variant(data))),*
@@ -46,14 +40,10 @@ enum_page! {
         blog = 3,
     }
 }
-
 impl Page {
-    pub fn get(
-        page_dir: &PathBuf,
-        data: Option<String>,
-    ) -> Option<Response<std::io::Cursor<Vec<u8>>>> {
-        if let Some(x) = page_dir.try_into_string() {
-            let x = Page::select(&x, data);
+    pub fn get(input: DestructedURL) -> Option<Response<std::io::Cursor<Vec<u8>>>> {
+        if let Some(x) = input.path.try_into_string() {
+            let x = Page::select(&x, input.extra_data);
             if let Some(y) = x {
                 return Some(Response::from_data(y.clone()).with_status_code(200));
             }

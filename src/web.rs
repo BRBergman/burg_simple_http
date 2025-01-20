@@ -32,7 +32,7 @@ impl ToWebResponse for DestructedURL {
         }
         .join("website");
         let pth = env.join(&self.path);
-        match Page::get(&self.path, self.extra_data.clone()) {
+        match Page::get(self.clone()) {
             Some(x) => x,
             None => match std::fs::read(&pth) {
                 Ok(x) => Response::from_data(x),
@@ -61,9 +61,9 @@ pub fn web_server(server: &Server) {
     }
 }
 #[derive(Debug, Clone)]
-struct DestructedURL {
-    pub path: PathBuf,
-    pub extra_data: Option<String>,
+pub struct DestructedURL {
+    path: PathBuf,
+    extra_data: Option<String>,
 }
 impl DestructedURL {
     fn new<T: ToString>(path: T) -> Self {
