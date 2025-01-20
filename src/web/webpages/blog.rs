@@ -19,7 +19,14 @@ pub fn blogvec() -> Vec<Blog> {
 }
 impl Webpages {
     pub fn blog(input: Option<String>) -> String {
-        let pages = blogvec();
+        let mut pages = blogvec();
+        if let Some(x) = input {
+            if let Ok(y) = Date::try_from(x) {
+                if let Some(x) = blogvec().iter().find(|x| x.date == y) {
+                    pages.extend([x.clone()]);
+                }
+            };
+        }
         html! {
             (DOCTYPE)
             html{
@@ -62,7 +69,7 @@ impl Blog {
 /// let date = Date::from((12/25/1999));
 /// ```
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 struct Date {
     pub month: u8,
     pub day: u8,
@@ -71,6 +78,26 @@ struct Date {
 impl From<(u8, u8, u16)> for Date {
     fn from((month, day, year): (u8, u8, u16)) -> Self {
         Date { month, day, year }
+    }
+}
+impl TryFrom<String> for Date {
+    type Error = String;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        let val = value
+            .splitn(3, '/')
+            .map(|x: &str| x.parse::<u16>().ok().ok_or(String::from("Bad Parse Error")))
+            .collect::<Vec<Result<u16, String>>>();
+
+        let mut unwrapped = Vec::new();
+        for vall in val {
+            unwrapped.push(vall?);
+        }
+        return Ok(Self::from((
+            unwrapped[0] as u8,
+            unwrapped[1] as u8,
+            unwrapped[2],
+        )));
     }
 }
 impl Display for Date {

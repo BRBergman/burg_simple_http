@@ -9,8 +9,7 @@ use crate::web::webpages::{
 use super::Webpages;
 
 impl Webpages {
-    #[expect(non_snake_case)]
-    pub fn home(input: Option<String>) -> String {
+    pub fn home(_input: Option<String>) -> String {
         let i = 0;
         html! {
                 (DOCTYPE)
@@ -50,7 +49,7 @@ impl Webpages {
         list[x].into()
     }
     //eventually rewrite with maud
-    pub fn index(input: Option<String>) -> String {
+    pub fn index(_input: Option<String>) -> String {
         let pc_specs = "Windows 10 Desktop (i9 9900k, rx 7800xt, 48 gb ram)";
         let laptop_specs =
             "Dell Inspiron 3537 running Arch Linux with the KDE Plasma Window Manager";
