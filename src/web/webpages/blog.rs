@@ -1,7 +1,7 @@
 use maud::{html, Markup, PreEscaped, DOCTYPE};
 use std::fmt::Display;
 
-use crate::web::webpages::{icon, stylesheet, title};
+use crate::web::webpages::{icon, style::Styles, title};
 
 use super::Webpages;
 pub fn blogvec() -> Vec<Blog> {
@@ -32,7 +32,7 @@ impl Webpages {
             html{
                 head{
                     (title("the burgblog"))
-                    (stylesheet("/index.css"))
+                    (Styles::default())
                     (icon("favicon.png"))
                 }
                 body{

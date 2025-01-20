@@ -1,13 +1,13 @@
 use maud::html;
 
-use crate::web::webpages::{script, stylesheet};
+use crate::web::webpages::{script, style::Styles};
 
 use super::Webpages;
 impl Webpages {
     pub fn htmx_test(_input: Option<String>) -> String {
         let res = html! {
         (script("https://unpkg.com/htmx.org@2.0.3"));
-        (stylesheet("index.css"));
+        (Styles::default());
         div{button hx-post=("/home") hx-swap=("outerHTML") {"hi"};}
 
         }

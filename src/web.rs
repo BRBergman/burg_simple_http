@@ -40,6 +40,7 @@ enum_page! {
         index = 1,
         htmx_test = 2,
         blog = 3,
+        stylesheet = 4,
     }
 }
 impl Page {
@@ -60,7 +61,7 @@ trait TryIntoString {
 }
 impl TryIntoString for PathBuf {
     fn try_into_string(&self) -> Option<String> {
-        Some(self.to_str()?.to_string())
+        self.to_str().as_ref().map(|&x| x.to_string())
     }
 }
 
@@ -106,11 +107,10 @@ pub fn web_server(server: &Server) {
     let mut spawns = Vec::new();
     for x in server.incoming_requests().into_iter() {
         let url = DestructedURL::new(x.url());
-        if let Some(_x @ "end") = &url.extra_data.as_deref() {
+        if let Some(_x @ "end") = url.extra_data.as_deref() {
             server.unblock();
         }
-
-        println!("{}", url.clone());
+        println!("{}", url);
         spawns.push(spawn(move || x.respond(url.to_web_response()).unwrap()));
     }
     for spawn in spawns {
@@ -129,11 +129,9 @@ impl DestructedURL {
         let twos = binding
             .trim_matches('/')
             .splitn(2, '?')
-            .map(|x| x)
             .collect::<Vec<&str>>();
         let url = PathBuf::from(twos[0]);
         let data = if twos.len() > 1 {
-            println!("{}", twos[1]);
             Some(twos[1].to_owned())
         } else {
             None
@@ -148,7 +146,7 @@ impl std::fmt::Display for DestructedURL {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{} ? {}",
+            "{}?{}",
             self.path.display(),
             self.extra_data.clone().unwrap_or_default()
         )

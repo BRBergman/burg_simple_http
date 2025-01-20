@@ -1,16 +1,9 @@
 pub mod blog;
 pub mod home;
 pub mod htmx;
+pub mod style;
 pub struct Webpages;
-
 use maud::{html, PreEscaped};
-
-#[inline]
-pub fn stylesheet(path: &str) -> PreEscaped<String> {
-    html! {
-        link rel="stylesheet" href=(path);
-    }
-}
 //<link rel="icon" href="/favicon.png">
 pub fn icon(path: &str) -> PreEscaped<String> {
     html! {
