@@ -5,7 +5,7 @@ use crate::web::webpages::{script, stylesheet};
 use super::Webpages;
 impl Webpages {
     #[expect(non_snake_case)]
-    pub fn HtmxTest() -> String {
+    pub fn htmx_test(input: Option<String>) -> String {
         let res = html! {
         (script("https://unpkg.com/htmx.org@2.0.3"));
         (stylesheet("index.css"));

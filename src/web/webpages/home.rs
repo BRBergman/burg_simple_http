@@ -10,7 +10,7 @@ use super::Webpages;
 
 impl Webpages {
     #[expect(non_snake_case)]
-    pub fn Home() -> String {
+    pub fn home(input: Option<String>) -> String {
         let i = 0;
         html! {
                 (DOCTYPE)
@@ -50,10 +50,9 @@ impl Webpages {
         list[x].into()
     }
     //eventually rewrite with maud
-    #[expect(non_snake_case)]
-    pub fn Index() -> String {
-        let pcSpecs = "Windows 10 Desktop (i9 9900k, rx 7800xt, 48 gb ram)";
-        let laptopSpecs =
+    pub fn index(input: Option<String>) -> String {
+        let pc_specs = "Windows 10 Desktop (i9 9900k, rx 7800xt, 48 gb ram)";
+        let laptop_specs =
             "Dell Inspiron 3537 running Arch Linux with the KDE Plasma Window Manager";
 
         html! {
@@ -92,9 +91,9 @@ impl Webpages {
                                     br;
                                     "My Main Coding Laguage is Rust"
                                     br;
-                                    "I daily drive a " {(pcSpecs)}
+                                    "I daily drive a " {(pc_specs)}
                                     br;
-                                    "My laptop is "{(laptopSpecs)}
+                                    "My laptop is "{(laptop_specs)}
                                 };
                                 h3 {"My Favorite Shows:"};
                                 {(vec!["Girls Band Cry",

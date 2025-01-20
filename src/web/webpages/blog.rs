@@ -18,8 +18,7 @@ pub fn blogvec() -> Vec<Blog> {
     ]
 }
 impl Webpages {
-    #[expect(non_snake_case)]
-    pub fn Blog() -> String {
+    pub fn blog(input: Option<String>) -> String {
         let pages = blogvec();
         html! {
             (DOCTYPE)

@@ -1,6 +1,6 @@
 use maud::html;
 use pages::Page;
-use std::{io::Cursor, thread};
+use std::io::Cursor;
 use std::path::PathBuf;
 use std::thread::spawn;
 use tiny_http::{Response, Server};
@@ -21,7 +21,7 @@ fn dir_not_found() -> Response<Cursor<Vec<u8>>> {
 pub trait ToWebResponse {
     fn to_web_response(&self) -> Response<Cursor<Vec<u8>>>;
 }
-impl ToWebResponse for PathBuf {
+impl ToWebResponse for DestructedURL {
     fn to_web_response(&self) -> Response<Cursor<Vec<u8>>> {
         let env = match std::env::current_dir() {
             Ok(x) => x,
@@ -31,10 +31,10 @@ impl ToWebResponse for PathBuf {
             }
         }
         .join("website");
-        let pth = &env.join(&self);
-        match Page::get(self) {
+        let pth = env.join(&self.path);
+        match Page::get(&self.path, self.extra_data.clone()) {
             Some(x) => x,
-            None => match std::fs::read(pth) {
+            None => match std::fs::read(&pth) {
                 Ok(x) => Response::from_data(x),
                 Err(_) => match std::fs::read(pth.join("index.html")) {
                     Ok(x) => Response::from_data(x),
@@ -47,18 +47,53 @@ impl ToWebResponse for PathBuf {
 pub fn web_server(server: &Server) -> Option<()> {
     let mut spawns = Vec::new();
     for x in server.incoming_requests().into_iter() {
-        let url = PathBuf::from(x.url().trim_matches('/'));
-        println!("Url: {}", url.display());
-        if x.url().trim_matches('/') == "end"{
-            server.unblock()
+        let url = DestructedURL::new(x.url());
+        if let Some(_x @ "end") = &url.extra_data.as_deref() {
+            server.unblock();
         }
-        else{
-            spawns.push(spawn(move || x.respond(url.to_web_response()).unwrap()));
-        }
+
+        println!("{}", url.clone());
+        spawns.push(spawn(move || x.respond(url.to_web_response()).unwrap()));
     }
     for spawn in spawns {
-        println!("joining: {:?}",spawn.thread().id());
+        println!("joining: {:?}", spawn.thread().id());
         let _ = spawn.join();
     }
     Some(())
+}
+#[derive(Debug, Clone)]
+struct DestructedURL {
+    pub path: PathBuf,
+    pub extra_data: Option<String>,
+}
+impl DestructedURL {
+    fn new<T: ToString>(path: T) -> Self {
+        let binding = path.to_string();
+        let twos = binding
+            .trim_matches('/')
+            .splitn(2, '?')
+            .map(|x| x)
+            .collect::<Vec<&str>>();
+        let url = PathBuf::from(twos[0]);
+        let data = if twos.len() > 1 {
+            println!("{}", twos[1]);
+            Some(twos[1].to_owned())
+        } else {
+            None
+        };
+        Self {
+            path: url,
+            extra_data: data,
+        }
+    }
+}
+impl std::fmt::Display for DestructedURL {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{} ? {}",
+            self.path.display(),
+            self.extra_data.clone().unwrap_or_default()
+        )
+    }
 }
