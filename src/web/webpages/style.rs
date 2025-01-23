@@ -1,6 +1,5 @@
-use maud::{html, Markup, PreEscaped};
-
 use super::Webpages;
+use maud::{html, Markup, PreEscaped};
 
 pub struct Styles;
 impl Styles {
