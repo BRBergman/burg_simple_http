@@ -102,7 +102,7 @@ impl Webpages {
                                 "Bocchi The Rock",
                                 "Serial Expiriments Lain",
                                 "Better Call <a style=\"color: red;\" onclick=\"SaulGoodmanBwawhAudio();\"><i>Saul</i></a>",
-                                "Madoka Magica"].as_list())}
+                                "Madoka Magica"].as_list().unwrap())}
                                 h3 {"My Favorite Games:"};
                                 {(vec!["Vicky 3",
                                 "Escape from Tarkov",
@@ -113,7 +113,7 @@ impl Webpages {
                                 "Half-Life",
                                 "Arma Reforger",
                                 "PSO2:NGS",
-                                "Team Fortress 2"].as_list())}
+                                "Team Fortress 2"].as_list().unwrap())}
                             }
                             div class="inbetween"{
                                 marquee behavior="scroll" direction="left"{
@@ -127,9 +127,8 @@ impl Webpages {
                                 }
                             }
                             div class="inbetween" {br;}
-                            @match blogvec().into_iter().last() {
-                                Some(x) => {(x.as_inner_boxes())},
-                                None => {(PreEscaped(String::new()))},
+                            @if let Some(x) =  blogvec().into_iter().last() {
+                                (x.as_inner_boxes())
                             }
                             div class="inbetween" {br;}
                             div class="innerboxes"{
@@ -189,16 +188,16 @@ impl Webpages {
     }
 }
 trait AsList {
-    fn as_list(self) -> PreEscaped<String>;
+    fn as_list(self) -> Option<PreEscaped<String>>;
 }
 impl<T: ToString> AsList for Vec<T> {
-    fn as_list(self) -> PreEscaped<String> {
+    fn as_list(self) -> Option<PreEscaped<String>> {
         let mut x = self
             .iter()
             .map(|x| format!("{}, </br>", x.to_string()))
             .collect::<Vec<String>>();
-        *x.first_mut().unwrap() = format!("<p> {}, <br>", self.first().unwrap().to_string());
-        *x.last_mut().unwrap() = format!("{}</p>", self.last().unwrap().to_string());
-        PreEscaped(x.concat())
+        *x.first_mut()? = format!("<p> {}, <br>",x.first()?);
+        *x.last_mut()? = format!("{}</p>", x.last()?);
+        Some(PreEscaped(x.concat()))
     }
 }
