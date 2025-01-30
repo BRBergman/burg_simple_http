@@ -1,3 +1,4 @@
+//doesnt work with any atribute with a - in it :(
 macro_rules! css {
     ($($name:ident {
         $($variant:ident: $val:ident;)*})*

@@ -1,21 +1,21 @@
 use super::Webpages;
-use maud::{html, Markup, PreEscaped};
+use maud::{html, Markup};
 
 pub struct Styles;
 impl Styles {
     pub fn default() -> Markup {
-        stylesheet("stylesheet")
+        stylesheet("defailt_style")
     }
 }
 #[inline]
-pub fn stylesheet(path: &str) -> PreEscaped<String> {
+pub fn stylesheet(path: &str) -> Markup {
     html! {
         link rel="stylesheet" href=(path);
     }
 }
 
 impl Webpages {
-    pub fn stylesheet(_input: Option<String>) -> String {
+    pub fn defailt_style(_input: Option<String>) -> String {
         format!(
             "
 html {{

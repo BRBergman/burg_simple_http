@@ -3,16 +3,16 @@ pub mod home;
 pub mod htmx;
 pub mod style;
 pub struct Webpages;
-use maud::{html, PreEscaped};
+use maud::{html, Markup, PreEscaped};
 //<link rel="icon" href="/favicon.png">
-pub fn icon(path: &str) -> PreEscaped<String> {
+pub fn icon(path: &str) -> Markup {
     html! {
         link rel="icon" href=(path);
     }
 }
-pub fn title(name: &str) -> PreEscaped<String> {
+pub fn title(name: &str) -> Markup {
     html! {title{(name)}}
 }
-pub fn script(script_file: &str) -> PreEscaped<String> {
+pub fn script(script_file: &str) -> Markup {
     PreEscaped(format!(r#"<script src="{}"></script>"#, script_file))
 }

@@ -30,6 +30,13 @@ macro_rules! enum_page {
                     _ => None,
                 }
             }
+            #[allow(dead_code)]
+            fn select_from_num(input:&i32,data: Option<String>) -> Option<String> {
+                match input {
+                    $($val => Some(Webpages::$variant(data))),*,
+                    _ => None,
+                }
+            }
         }
     };
 }
@@ -40,7 +47,7 @@ enum_page! {
         index = 1,
         htmx_test = 2,
         blog = 3,
-        stylesheet = 4,
+        defailt_style = 4,
     }
 }
 impl Page {
