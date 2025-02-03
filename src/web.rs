@@ -47,7 +47,7 @@ enum_page! {
         index = 1,
         htmx_test = 2,
         blog = 3,
-        defailt_style = 4,
+        default_style = 4,
     }
 }
 impl Page {

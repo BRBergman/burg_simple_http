@@ -15,7 +15,7 @@ pub fn stylesheet(path: &str) -> Markup {
 }
 
 impl Webpages {
-    pub fn defailt_style(_input: Option<String>) -> String {
+    pub fn default_style(_input: Option<String>) -> String {
         format!(
             "
 html {{
