@@ -52,27 +52,30 @@ enum_page! {
 }
 impl Page {
     pub fn get(input: DestructedURL) -> Option<DataResponse> {
-        if let Some(x) = input.path.try_into_string() {
-            let x = Page::select(&x, input.extra_data);
-            if let Some(y) = x {
-                return Some(Response::from_data(y.clone()).with_status_code(200));
-            }
-        }
-        None
+        input
+            .path
+            .to_str()
+            .map(|x| Page::select(&x, input.extra_data))?
+            .map(|x| Response::from_data(x).with_status_code(200))
     }
 }
+
+/*trait Mep<T> {
+    fn mep<U, F>(self, f: F) -> Option<U>
+    where
+        F: FnOnce(T) -> U;
+}
+
+impl<T> Mep<T> for T {
+    fn mep<U, F>(self, f: F) -> Option<U>
+    where
+        F: FnOnce(T) -> U,
+    {
+        Some(f(self))
+    }
+} */
+
 pub type DataResponse = Response<std::io::Cursor<Vec<u8>>>;
-
-trait TryIntoString {
-    fn try_into_string(&self) -> Option<String>;
-}
-impl TryIntoString for PathBuf {
-    fn try_into_string(&self) -> Option<String> {
-        self.to_str().as_ref().map(|&x| x.to_string())
-    }
-}
-
-//pub mod webpages;
 
 fn dir_not_found() -> DataResponse {
     Response::from_data(
