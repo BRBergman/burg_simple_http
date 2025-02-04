@@ -70,13 +70,7 @@ impl Page {
 
 impl DestructedURL {
     pub fn to_web_response(&self) -> Response<std::io::Cursor<Vec<u8>>> {
-        let env = match std::env::current_dir() {
-            Ok(x) => x.join("website"),
-            Err(err) => {
-                println!("finding local directory error: {}", err);
-                return dir_not_found();
-            }
-        };
+        let env = PathBuf::from("./website");
         if let Some(x) = Page::get(self) {
             Response::from_data(x)
         } else if let Ok(x) = std::fs::read(env.join(&self.path)) {
