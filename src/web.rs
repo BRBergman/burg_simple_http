@@ -2,8 +2,7 @@ use maud::html;
 use webpages::Webpages;
 mod webpages;
 use std::path::PathBuf;
-use std::thread::spawn;
-use tiny_http::{Response, Server};
+use tiny_http::Response;
 
 macro_rules! enum_page {
     (enum $name:ident {
@@ -51,9 +50,7 @@ enum_page! {
     }
 }
 
-pub type DataResponse = Response<std::io::Cursor<Vec<u8>>>;
-
-fn dir_not_found() -> DataResponse {
+fn dir_not_found() -> Response<std::io::Cursor<Vec<u8>>> {
     Response::from_data(
         html! {
         h1{"Error 500"}
@@ -71,19 +68,15 @@ impl Page {
     }
 }
 
-pub trait ToWebResponse {
-    fn to_web_response(&self) -> DataResponse;
-}
-impl ToWebResponse for DestructedURL {
-    fn to_web_response(&self) -> DataResponse {
+impl DestructedURL {
+    pub fn to_web_response(&self) -> Response<std::io::Cursor<Vec<u8>>> {
         let env = match std::env::current_dir() {
-            Ok(x) => x,
+            Ok(x) => x.join("website"),
             Err(err) => {
                 println!("finding local directory error: {}", err);
                 return dir_not_found();
             }
-        }
-        .join("website");
+        };
         if let Some(x) = Page::get(self) {
             Response::from_data(x)
         } else if let Ok(x) = std::fs::read(env.join(&self.path)) {
@@ -95,28 +88,13 @@ impl ToWebResponse for DestructedURL {
         }
     }
 }
-pub fn web_server(server: &Server) {
-    let mut spawns = Vec::new();
-    for x in server.incoming_requests().into_iter() {
-        let url = DestructedURL::new(x.url());
-        if let Some(_x @ "end") = url.extra_data.as_deref() {
-            server.unblock();
-        }
-        println!("{}", url);
-        spawns.push(spawn(move || x.respond(url.to_web_response()).unwrap()));
-    }
-    for spawn in spawns {
-        println!("joining: {:?}", spawn.thread().id());
-        let _ = spawn.join();
-    }
-}
 #[derive(Debug, Clone)]
 pub struct DestructedURL {
-    path: PathBuf,
-    extra_data: Option<String>,
+    pub path: PathBuf,
+    pub extra_data: Option<String>,
 }
 impl DestructedURL {
-    fn new<T: ToString>(path: T) -> Self {
+    pub fn new<T: ToString>(path: T) -> Self {
         let binding = path.to_string();
         let twos = binding
             .trim_matches('/')
