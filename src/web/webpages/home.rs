@@ -196,7 +196,7 @@ impl<T: ToString> AsList for Vec<T> {
             .iter()
             .map(|x| format!("{}, </br>", x.to_string()))
             .collect::<Vec<String>>();
-        *x.first_mut()? = format!("<p> {}, <br>",x.first()?);
+        *x.first_mut()? = format!("<p> {}, <br>", x.first()?);
         *x.last_mut()? = format!("{}</p>", x.last()?);
         Some(PreEscaped(x.concat()))
     }

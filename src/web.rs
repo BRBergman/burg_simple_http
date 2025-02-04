@@ -50,30 +50,6 @@ enum_page! {
         default_style = 4,
     }
 }
-impl Page {
-    pub fn get(input: DestructedURL) -> Option<DataResponse> {
-        input
-            .path
-            .to_str()
-            .map(|x| Page::select(&x, input.extra_data))?
-            .map(|x| Response::from_data(x).with_status_code(200))
-    }
-}
-
-/*trait Mep<T> {
-    fn mep<U, F>(self, f: F) -> Option<U>
-    where
-        F: FnOnce(T) -> U;
-}
-
-impl<T> Mep<T> for T {
-    fn mep<U, F>(self, f: F) -> Option<U>
-    where
-        F: FnOnce(T) -> U,
-    {
-        Some(f(self))
-    }
-} */
 
 pub type DataResponse = Response<std::io::Cursor<Vec<u8>>>;
 
@@ -85,6 +61,14 @@ fn dir_not_found() -> DataResponse {
         .into_string(),
     )
     .with_status_code(500)
+}
+impl Page {
+    pub fn get(input: &DestructedURL) -> Option<String> {
+        input
+            .path
+            .to_str()
+            .map(|x| Page::select(x, input.extra_data.clone()))?
+    }
 }
 
 pub trait ToWebResponse {
@@ -100,16 +84,14 @@ impl ToWebResponse for DestructedURL {
             }
         }
         .join("website");
-        let pth = env.join(&self.path);
-        match Page::get(self.clone()) {
-            Some(x) => x,
-            None => match std::fs::read(&pth) {
-                Ok(x) => Response::from_data(x),
-                Err(_) => match std::fs::read(pth.join("index.html")) {
-                    Ok(x) => Response::from_data(x),
-                    Err(_) => Response::from_data(html! {h1{"Not Found"}}.into_string()),
-                },
-            },
+        if let Some(x) = Page::get(self) {
+            Response::from_data(x)
+        } else if let Ok(x) = std::fs::read(env.join(&self.path)) {
+            Response::from_data(x)
+        } else if let Ok(x) = std::fs::read(env.join(&self.path).join("index.html")) {
+            Response::from_data(x)
+        } else {
+            Response::from_data(html! {h1{"Not Found"}}.into_string())
         }
     }
 }

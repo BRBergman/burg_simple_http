@@ -4,7 +4,7 @@ use maud::{html, Markup};
 pub struct Styles;
 impl Styles {
     pub fn default() -> Markup {
-        stylesheet("defailt_style")
+        stylesheet("default_style")
     }
 }
 #[inline]

@@ -84,7 +84,7 @@ impl TryFrom<String> for Date {
     type Error = String;
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
-        let val:Vec<Result<u16, String>> = value
+        let val: Vec<Result<u16, String>> = value
             .splitn(3, '/')
             .map(|x: &str| x.parse::<u16>().ok().ok_or(String::from("Bad Parse Error")))
             .collect();
