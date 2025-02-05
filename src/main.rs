@@ -23,7 +23,7 @@ fn main() {
                 server.unblock();
                 break;
             }
-            spawn(move || x.respond(url.to_web_response()))
+            spawn(move || x.respond(url.web_response()))
         });
     }
     for spawn in spawns {

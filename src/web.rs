@@ -49,16 +49,6 @@ enum_page! {
         default_style = 4,
     }
 }
-
-fn dir_not_found() -> Response<std::io::Cursor<Vec<u8>>> {
-    Response::from_data(
-        html! {
-        h1{"Error 500"}
-        p{"Directory Error! ENV folder not found!"}}
-        .into_string(),
-    )
-    .with_status_code(500)
-}
 impl Page {
     pub fn get(input: &DestructedURL) -> Option<String> {
         input
@@ -69,7 +59,7 @@ impl Page {
 }
 
 impl DestructedURL {
-    pub fn to_web_response(&self) -> Response<std::io::Cursor<Vec<u8>>> {
+    pub fn web_response(&self) -> Response<std::io::Cursor<Vec<u8>>> {
         let env = PathBuf::from("./website");
         if let Some(x) = Page::get(self) {
             Response::from_data(x)
