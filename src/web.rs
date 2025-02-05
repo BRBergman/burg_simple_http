@@ -49,19 +49,14 @@ enum_page! {
         default_style = 4,
     }
 }
-impl Page {
-    pub fn get(input: &DestructedURL) -> Option<String> {
-        input
-            .path
-            .to_str()
-            .map(|x| Page::select(x, input.extra_data.clone()))?
-    }
-}
-
 impl DestructedURL {
     pub fn web_response(&self) -> Response<std::io::Cursor<Vec<u8>>> {
         let env = PathBuf::from("./website");
-        if let Some(x) = Page::get(self) {
+        if let Some(x) = self
+            .path
+            .to_str()
+            .map_or(None, |x| Page::select(x, self.extra_data.clone()))
+        {
             Response::from_data(x)
         } else if let Ok(x) = std::fs::read(env.join(&self.path)) {
             Response::from_data(x)
