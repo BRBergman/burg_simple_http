@@ -17,12 +17,12 @@ macro_rules! enum_page {
 
         impl $name {
             #[allow(unused)]
-            fn name(&self) -> &'static str {
+            pub fn name(&self) -> &'static str {
                 match self {
                     $($name::$variant => stringify!($variant)),*
                 }
             }
-            fn select(input:&str,data: Option<String>) -> Option<String> {
+            pub fn select(input:&str,data: Option<String>) -> Option<String> {
                 match input {
                     $(stringify!($variant) => Some(Webpages::$variant(data))),*
                     ,"" | "/" => Some(Webpages::index(data)),
@@ -30,7 +30,7 @@ macro_rules! enum_page {
                 }
             }
             #[allow(dead_code)]
-            fn select_from_num(input:&i32,data: Option<String>) -> Option<String> {
+            pub fn select_from_num(input:&i32,data: Option<String>) -> Option<String> {
                 match input {
                     $($val => Some(Webpages::$variant(data))),*,
                     _ => None,

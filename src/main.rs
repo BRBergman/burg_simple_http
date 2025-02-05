@@ -4,11 +4,14 @@ use std::{
 };
 use tiny_http::Server;
 mod web;
-use web::DestructedURL;
+use web::{DestructedURL, Page};
+mod export_page;
 //TODO: use htmx instead of js
 //maud
 //impl core::ops::Add <- thing
 fn main() {
+    
+    export_page::export(Page::index, None);
     let port = 8000;
     println!("Running");
     let Ok(server) = Server::http(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, port)) else {

@@ -4,7 +4,7 @@ use rand::Rng;
 use crate::web::webpages::{
     blog::{blogvec, ToMarkup},
     icon, script,
-    style::Styles,
+    style::{stylesheet, Styles},
     title,
 };
 
@@ -61,7 +61,7 @@ impl Webpages {
                 html{
                 head{
                     (title("Burg's Room"))
-                    (Styles::default())
+                    (stylesheet("/index.css"))
                     (icon("favicon.png"))
                 }
                 body{
